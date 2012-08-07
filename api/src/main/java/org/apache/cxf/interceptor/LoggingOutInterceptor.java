@@ -20,14 +20,6 @@
 package org.apache.cxf.interceptor;
 
 
-import java.io.FilterWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.cxf.common.injection.NoJSR250Annotations;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.io.CacheAndWriteOutputStream;
@@ -35,6 +27,10 @@ import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.io.CachedOutputStreamCallback;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
+
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -96,7 +92,7 @@ public class LoggingOutInterceptor extends AbstractLoggingInterceptor {
             message.getExchange().put(LoggingMessage.ID_KEY, id);
         }
         final LoggingMessage buffer 
-            = new LoggingMessage("Outbound Message\n---------------------------",
+            = new LoggingMessage("Outbound Message here :) \n---------------------------",
                                  id);
         
         Integer responseCode = (Integer)message.get(Message.RESPONSE_CODE);

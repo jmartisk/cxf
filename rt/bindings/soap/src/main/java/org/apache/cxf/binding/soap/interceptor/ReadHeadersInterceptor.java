@@ -19,30 +19,8 @@
 
 package org.apache.cxf.binding.soap.interceptor;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-//import org.w3c.dom.NodeList;
-
 import org.apache.cxf.Bus;
-import org.apache.cxf.binding.soap.Soap11;
-import org.apache.cxf.binding.soap.Soap12;
-import org.apache.cxf.binding.soap.SoapFault;
-import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.binding.soap.SoapMessage;
-import org.apache.cxf.binding.soap.SoapVersion;
-import org.apache.cxf.binding.soap.SoapVersionFactory;
+import org.apache.cxf.binding.soap.*;
 import org.apache.cxf.common.i18n.Message;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.common.util.StringUtils;
@@ -56,6 +34,17 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.staxutils.PartialXMLStreamReader;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
+import org.w3c.dom.*;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
+import java.util.List;
+import java.util.logging.Logger;
+
+//import org.w3c.dom.NodeList;
 
 
 public class ReadHeadersInterceptor extends AbstractSoapInterceptor {
@@ -87,6 +76,7 @@ public class ReadHeadersInterceptor extends AbstractSoapInterceptor {
     }
 
     private static final Logger LOG = LogUtils.getL7dLogger(ReadHeadersInterceptor.class);
+
 
     private Bus bus;
     private SoapVersion version;
@@ -125,6 +115,7 @@ public class ReadHeadersInterceptor extends AbstractSoapInterceptor {
             LOG.fine("ReadHeadersInterceptor skipped in HTTP GET method");
             return;
         }
+        LOG.info("**** handleMessage found headers: " + message.getHeaders());
         XMLStreamReader xmlReader = message.getContent(XMLStreamReader.class);
 
         if (xmlReader == null) {

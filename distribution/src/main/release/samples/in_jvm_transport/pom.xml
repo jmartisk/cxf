@@ -97,23 +97,23 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>2.7.0-SNAPSHOT</version>
+            <version>2.7.0-SNAPSHOT-jmartisk</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
-            <version>2.7.0-SNAPSHOT</version>
+            <version>2.7.0-SNAPSHOT-jmartisk</version>
         </dependency>
         <!-- Jetty is needed if you're using the CXFServlet -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http-jetty</artifactId>
-            <version>2.7.0-SNAPSHOT</version>
+            <version>2.7.0-SNAPSHOT-jmartisk</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-bindings-coloc</artifactId>
-            <version>2.7.0-SNAPSHOT</version>
+            <version>2.7.0-SNAPSHOT-jmartisk</version>
         </dependency>
     </dependencies>
 </project>
