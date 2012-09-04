@@ -97,7 +97,7 @@ public class MAPCodec extends AbstractSoapInterceptor {
     public MAPCodec() {
         super(Phase.PRE_PROTOCOL);
         transformer = new VersionTransformer(this);
-    } 
+    }
 
     public Map<String, Exchange> getUncorrelatedExchanges() {
         return uncorrelatedExchanges;
@@ -774,7 +774,7 @@ public class MAPCodec extends AbstractSoapInterceptor {
         String faultName = ContextUtils.retrieveMAPFaultName(message);
         if (faultName != null) {
             String reason = ContextUtils.retrieveMAPFaultReason(message);
-            throw createSOAPFaut(faultName, 
+            throw createSOAPFaut(faultName,
                                            Names.WSA_NAMESPACE_NAME,
                                            reason);
         }

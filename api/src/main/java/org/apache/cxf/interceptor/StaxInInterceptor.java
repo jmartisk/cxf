@@ -19,18 +19,6 @@
 
 package org.apache.cxf.interceptor;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.common.util.StringUtils;
@@ -41,6 +29,15 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.staxutils.StaxUtils;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Creates an XMLStreamReader from the InputStream on the Message.
@@ -63,6 +60,27 @@ public class StaxInInterceptor extends AbstractPhaseInterceptor<Message> {
             return;
         }
         InputStream is = message.getContent(InputStream.class);
+
+        // <H-A-C-K>
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+        try {
+            while ((len = is.read(buffer)) > -1 ) {
+                baos.write(buffer, 0, len);
+            }
+            baos.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        is = new ByteArrayInputStream(baos.toByteArray());
+        message.setContent(InputStream.class, is);
+        String soapMessage = baos.toString();
+        System.out.println("[HACK] Adding SOAP message as String content");
+        message.setContent(String.class, soapMessage);
+        message.setContent(ByteArrayInputStream.class, new ByteArrayInputStream(baos.toByteArray()));
+        // </H-A-C-K>
+
         Reader reader = null;
         if (is == null) {
             reader = message.getContent(Reader.class);
