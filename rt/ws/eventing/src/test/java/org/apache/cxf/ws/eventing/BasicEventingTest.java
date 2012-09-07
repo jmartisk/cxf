@@ -20,9 +20,6 @@
 package org.apache.cxf.ws.eventing;
 
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.feature.Features;
-import org.apache.cxf.interceptor.InInterceptors;
-import org.apache.cxf.interceptor.OutInterceptors;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.local.LocalTransportFactory;
 import org.apache.cxf.ws.eventing.service.AbstractEventSource;
@@ -41,9 +38,6 @@ public class BasicEventingTest {
     static Server server;
 
     @WebService(endpointInterface = "org.apache.cxf.ws.eventing.service.EventSourceInterface")
-    @InInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingInInterceptor")
-    @OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor")
-    @Features(features = "org.apache.cxf.ws.eventing.EventingFeature")
     public static class HelloServiceImpl extends AbstractEventSource {
 
     }

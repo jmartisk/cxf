@@ -20,5 +20,16 @@ public class EventingConstants {
 
     public static final String ACTION_FAULT = "http://www.w3.org/2011/03/ws-evt/fault";
 
+    public static final String EVENTING_2011_03_NAMESPACE = "http://www.w3.org/2011/03/ws-evt";
 
+    public static final String RESPONSE_RENEW = "RenewResponse";
+
+
+    public static final String RESPONSE_SUBSCRIBE = "SubscribeResponse";
+    public static final String OPERATION_SUBSCRIBE = "Subscribe";
+    public static final String OPERATION_RENEW = "Renew";
+    public static final String RESPONSE_GET_STATUS = "GetStatusResponse";
+    public static final String OPERATION_GET_STATUS = "GetStatus";
+    public static final String RESPONSE_UNSUBSCRIBE = "UnsubscribeResponse";
+    public static final String OPERATION_UNSUBSCRIBE = "Unsubscribe";
 }

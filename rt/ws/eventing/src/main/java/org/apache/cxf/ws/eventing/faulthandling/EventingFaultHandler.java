@@ -1,4 +1,4 @@
-package org.apache.cxf.ws.eventing.interceptor;
+package org.apache.cxf.ws.eventing.faulthandling;
 
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
@@ -9,6 +9,7 @@ import org.apache.cxf.ws.addressing.AddressingProperties;
 import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.soap.DecoupledFaultHandler;
 import org.apache.cxf.ws.addressing.AttributedURIType;
+import org.apache.cxf.ws.eventing.EventingConstants;
 
 import java.util.logging.Logger;
 
@@ -30,7 +31,7 @@ public class EventingFaultHandler extends AbstractSoapInterceptor {
         AddressingProperties maps =
                 ContextUtils.retrieveMAPs(message, false, true, true);
         AttributedURIType action = new AttributedURIType();
-        action.setValue("http://www.w3.org/2011/03/ws-evt/fault");
+        action.setValue(EventingConstants.ACTION_FAULT);
         maps.setAction(action);
         ContextUtils.storeMAPs(maps, message, true);
 
