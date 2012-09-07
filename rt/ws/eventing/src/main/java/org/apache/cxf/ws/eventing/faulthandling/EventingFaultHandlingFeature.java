@@ -8,6 +8,7 @@ import org.apache.cxf.interceptor.InterceptorProvider;
  * @author jmartisk
  * @since 8/14/12
  */
+@Deprecated
 public class EventingFaultHandlingFeature extends AbstractFeature {
 
     private EventingFaultHandler faultHandler = new EventingFaultHandler();

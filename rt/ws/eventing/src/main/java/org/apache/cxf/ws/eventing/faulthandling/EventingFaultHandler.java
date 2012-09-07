@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  * @author jmartisk
  * @since 8/28/12
  */
+@Deprecated
 public class EventingFaultHandler extends AbstractSoapInterceptor {
 
     private static final Logger LOG = LogUtils.getLogger(EventingFaultHandler.class);
