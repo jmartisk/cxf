@@ -13,8 +13,8 @@ import javax.jws.soap.SOAPBinding;
 @WebService
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @Features(features = "org.apache.cxf.ws.addressing.WSAddressingFeature")
-public interface SubscriberService {
+public interface EventSinkInterface {
 
-    public Object notification(@WebParam Object notification);
+    public void notification(@WebParam Object notification);
 
 }

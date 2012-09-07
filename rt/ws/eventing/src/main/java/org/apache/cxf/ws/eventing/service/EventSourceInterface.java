@@ -3,26 +3,25 @@ package org.apache.cxf.ws.eventing.service;
 import org.apache.cxf.ws.eventing.*;
 
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.Action;
 
-//    @WebMethod(operationName = "SubscribeOp")
-//    @WebResult(name = "SubscribeResponse", targetNamespace = "http://www.w3.org/2011/03/ws-evt", partName = "body")
 /**
  * @author jmartisk
  * @since 8/28/12
  */
 @WebService(targetNamespace = "http://www.w3.org/2011/03/ws-evt")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-public interface EventSourceEndpoint {
+public interface EventSourceInterface {
 
 
     @Action(
             input = EventingConstants.ACTION_SUBSCRIBE,
             output = EventingConstants.ACTION_SUBSCRIBE_RESPONSE
     )
-    public SubscribeResponse subscribeOp(
+    public @WebResult(name = "SubscribeResponse") SubscribeResponse subscribeOp(
             @WebParam(name = "Subscribe", targetNamespace = "http://www.w3.org/2011/03/ws-evt", partName = "body")
             Subscribe body);
 
@@ -30,7 +29,7 @@ public interface EventSourceEndpoint {
             input = EventingConstants.ACTION_RENEW,
             output = EventingConstants.ACTION_RENEW_RESPONSE
     )
-    public RenewResponse renewOp(
+    public @WebResult(name = "RenewResponse") RenewResponse renewOp(
            @WebParam(name = "Renew", targetNamespace = "http://www.w3.org/2011/03/ws-evt", partName = "body")
            Renew body
     );
@@ -39,7 +38,7 @@ public interface EventSourceEndpoint {
             input = EventingConstants.ACTION_GET_STATUS,
             output = EventingConstants.ACTION_GET_STATUS_RESPONSE
     )
-    public GetStatusResponse getStatusOp(
+    public @WebResult(name = "GetStatusResponse") GetStatusResponse getStatusOp(
             @WebParam(name = "GetStatus", targetNamespace = "http://www.w3.org/2011/03/ws-evt", partName = "body")
             GetStatus body
     );
@@ -48,7 +47,7 @@ public interface EventSourceEndpoint {
             input = EventingConstants.ACTION_UNSUBSCRIBE,
             output = EventingConstants.ACTION_UNSUBSCRIBE_RESPONSE
     )
-    public UnsubscribeResponse unsubscribeOp(
+    public @WebResult(name = "UnsubscribeResponse") UnsubscribeResponse unsubscribeOp(
             @WebParam(name = "Unsubscribe", targetNamespace = "http://www.w3.org/2011/03/ws-evt", partName = "body")
             Unsubscribe body
     );

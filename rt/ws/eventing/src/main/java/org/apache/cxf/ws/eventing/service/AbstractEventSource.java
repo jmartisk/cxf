@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * @author jmartisk
  * @since 8/28/12
  */
-public class AbstractEventSource implements EventSourceEndpoint {
+public class AbstractEventSource implements EventSourceInterface {
 
     private static final Logger LOG = LogUtils.getLogger(AbstractEventSource.class);
 
@@ -28,6 +28,8 @@ public class AbstractEventSource implements EventSourceEndpoint {
         }
 
         SubscribeResponse r = new SubscribeResponse();
+        r.setGrantedExpires(new MiniExpirationType());
+        r.getGrantedExpires().setValue("asdfg");
 /*        SubscriptionTicket ticket = new SubscriptionTicket();
         ticket.setDelivery(body.getDelivery());
         ticket.setEndTo(body.getEndTo());

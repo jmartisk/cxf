@@ -40,7 +40,7 @@ public class BasicEventingTest {
 
     static Server server;
 
-    @WebService(endpointInterface = "org.apache.cxf.ws.eventing.service.EventSourceEndpoint")
+    @WebService(endpointInterface = "org.apache.cxf.ws.eventing.service.EventSourceInterface")
     @InInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingInInterceptor")
     @OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor")
     @Features(features = "org.apache.cxf.ws.eventing.EventingFeature")
