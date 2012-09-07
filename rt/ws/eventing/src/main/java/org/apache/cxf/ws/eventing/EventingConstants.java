@@ -18,5 +18,7 @@ public class EventingConstants {
     public static final String ACTION_UNSUBSCRIBE = "http://www.w3.org/2011/03/ws-evt/Unsubscribe";
     public static final String ACTION_UNSUBSCRIBE_RESPONSE = "http://www.w3.org/2011/03/ws-evt/UnsubscribeResponse";
 
+    public static final String ACTION_FAULT = "http://www.w3.org/2011/03/ws-evt/fault";
+
 
 }

@@ -1,8 +1,7 @@
 package org.apache.cxf.ws.eventing.dummysubscriber;
 
+import org.apache.cxf.ws.eventing.SubscriptionEnd;
 import org.apache.cxf.ws.eventing.subscription.client.EventSinkInterface;
-
-import javax.jws.WebParam;
 
 /**
  * @author jmartisk
@@ -11,8 +10,13 @@ import javax.jws.WebParam;
 public class DummySubscriberService implements EventSinkInterface {
 
     @Override
-    public void notification(@WebParam Object notification) {
+    public void notification(Object notification) {
         System.out.println(notification);
+    }
+
+    @Override
+    public void subscriptionEnd(SubscriptionEnd subscriptionEnd) {
+
     }
 
 }

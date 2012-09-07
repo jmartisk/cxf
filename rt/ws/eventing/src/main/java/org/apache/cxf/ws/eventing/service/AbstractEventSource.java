@@ -3,6 +3,7 @@ package org.apache.cxf.ws.eventing.service;
 
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.*;
+import org.apache.cxf.ws.eventing.faults.CannotProcessFilter;
 import org.apache.cxf.ws.eventing.faults.UnsupportedExpirationValue;
 
 import java.util.logging.Logger;
@@ -39,7 +40,8 @@ public class AbstractEventSource implements EventSourceInterface {
         MiniExpirationType met = new MiniExpirationType();
         met.setValue("21541");
         r.setGrantedExpires(met);*/
-        return r;
+        throw new CannotProcessFilter();
+//        return r;
     }
 
     @Override

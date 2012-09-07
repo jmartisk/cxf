@@ -61,26 +61,6 @@ public class StaxInInterceptor extends AbstractPhaseInterceptor<Message> {
         }
         InputStream is = message.getContent(InputStream.class);
 
-        // <H-A-C-K>
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len;
-        try {
-            while ((len = is.read(buffer)) > -1 ) {
-                baos.write(buffer, 0, len);
-            }
-            baos.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        is = new ByteArrayInputStream(baos.toByteArray());
-        message.setContent(InputStream.class, is);
-        String soapMessage = baos.toString();
-        System.out.println("[HACK] Adding SOAP message as String content");
-        message.setContent(String.class, soapMessage);
-        message.setContent(ByteArrayInputStream.class, new ByteArrayInputStream(baos.toByteArray()));
-        // </H-A-C-K>
-
         Reader reader = null;
         if (is == null) {
             reader = message.getContent(Reader.class);
