@@ -1,11 +1,11 @@
-package org.apache.cxf.ws.eventing.filter;
+package org.apache.cxf.ws.eventing.utils;
 
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.ws.eventing.FilterType;
 import org.apache.cxf.ws.eventing.faults.EmptyFilter;
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.*;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -23,19 +23,15 @@ public class FilteringUtil {
         return (namespace.equals(NAMESPACE_XPATH10) || namespace.equals(NAMESPACE_XPATH20));
     }
 
-    public static boolean doesConformToFilter(Element elm, List<String> filter) {
-        if(filter.size() == 0)
+    public static boolean doesConformToFilter(Element elm, FilterType filter) {
+        if(filter.getContent() == null)
             return true;
+        String xPathString = (String)filter.getContent().get(0);
         try {
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
-            for (String xpathString : filter) {
-                XPathExpression xPathExpression = xPath.compile(xpathString);
-                boolean ok = (Boolean) xPathExpression.evaluate(elm, XPathConstants.BOOLEAN);
-                if(!ok)
-                    return false;
-            }
-            return true;
+            XPathExpression xPathExpression = xPath.compile(xPathString);
+            return (Boolean) xPathExpression.evaluate(elm, XPathConstants.BOOLEAN);
         } catch (XPathExpressionException ex) {
             LOG.severe(ex.toString());
             throw new EmptyFilter();

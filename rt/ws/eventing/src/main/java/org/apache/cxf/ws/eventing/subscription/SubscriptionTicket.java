@@ -5,7 +5,7 @@ import org.apache.cxf.ws.eventing.EndpointReferenceType;
 import org.apache.cxf.ws.eventing.ExpirationType;
 import org.apache.cxf.ws.eventing.FilterType;
 import org.apache.cxf.ws.eventing.faults.FilteringRequestedUnavailable;
-import org.apache.cxf.ws.eventing.filter.FilteringUtil;
+import org.apache.cxf.ws.eventing.utils.FilteringUtil;
 
 /**
  * @author jmartisk

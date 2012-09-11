@@ -1,5 +1,6 @@
 package org.apache.cxf.ws.eventing.subscription.client;
 
+import org.apache.cxf.ws.eventing.EventingConstants;
 import org.apache.cxf.ws.eventing.SubscriptionEnd;
 
 import javax.jws.Oneway;
@@ -23,7 +24,7 @@ public interface EventSinkInterface {
 
     @Oneway
     @Action(
-            input = "http://www.w3.org/2011/03/ws-evt/SubscriptionEnd"
+            input = EventingConstants.ACTION_SUBSCRIPTION_END
     )
     public void subscriptionEnd(@WebParam SubscriptionEnd subscriptionEnd);
 

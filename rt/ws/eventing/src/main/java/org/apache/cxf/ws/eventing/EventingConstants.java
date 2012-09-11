@@ -32,4 +32,5 @@ public class EventingConstants {
     public static final String OPERATION_GET_STATUS = "GetStatus";
     public static final String RESPONSE_UNSUBSCRIBE = "UnsubscribeResponse";
     public static final String OPERATION_UNSUBSCRIBE = "Unsubscribe";
+    public static final String ACTION_SUBSCRIPTION_END = "http://www.w3.org/2011/03/ws-evt/SubscriptionEnd";
 }
