@@ -1,13 +1,13 @@
 package org.apache.cxf.ws.eventing.dummysubscriber;
 
 import org.apache.cxf.ws.eventing.SubscriptionEnd;
-import org.apache.cxf.ws.eventing.subscription.client.EventSinkInterface;
+import org.apache.cxf.ws.eventing.client.EventSinkInterface;
 
 /**
  * @author jmartisk
  * @since 9/3/12
  */
-public class DummySubscriberService implements EventSinkInterface {
+public class DummyEventSink implements EventSinkInterface {
 
     @Override
     public void notification(Object notification) {

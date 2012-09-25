@@ -8,10 +8,8 @@ import java.net.URI;
  * @author jmartisk
  * @since 8/27/12
  */
-public class EventDispatcher {
+public interface EventDispatcher {
 
-    public void dispatch(URI eventSourceNS, Element event) {
-
-    }
+    public void dispatch(URI eventSourceNS, Element event);
 
 }

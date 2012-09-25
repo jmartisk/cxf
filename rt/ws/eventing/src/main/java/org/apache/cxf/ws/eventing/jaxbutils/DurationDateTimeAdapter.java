@@ -15,12 +15,12 @@ public class DurationDateTimeAdapter extends XmlAdapter<String,DurationDateTime>
 
     @Override
     public DurationDateTime unmarshal(String v) throws Exception {
+        DatatypeFactory factory = DatatypeFactory.newInstance();
         try {
             // does the received string conform to xs:dateTime ? if so, parse a XMLGregorianCalendar out of it
-            XMLGregorianCalendar calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(v);
+            XMLGregorianCalendar calendar = factory.newXMLGregorianCalendar(v);
             return new DurationDateTime(calendar);
         } catch (IllegalArgumentException ex) {
-            DatatypeFactory factory = DatatypeFactory.newInstance();
             try {
                 return new DurationDateTime(factory.newDuration(v));
             } catch(IllegalArgumentException e) {

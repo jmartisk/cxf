@@ -5,8 +5,8 @@ import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.local.LocalTransportFactory;
-import org.apache.cxf.ws.eventing.dummysubscriber.DummySubscriberService;
-import org.apache.cxf.ws.eventing.subscription.client.EventSinkInterface;
+import org.apache.cxf.ws.eventing.dummysubscriber.DummyEventSink;
+import org.apache.cxf.ws.eventing.client.EventSinkInterface;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -26,7 +26,7 @@ public class NotificationGenerationTest {
     @Test
     public void testIt() throws IOException, SAXException, ParserConfigurationException {
 
-        EventSinkInterface serverImpl = new DummySubscriberService();
+        EventSinkInterface serverImpl = new DummyEventSink();
         Endpoint.publish("local://subscriber", serverImpl);
 
         JaxWsProxyFactoryBean proxyFac = new JaxWsProxyFactoryBean();

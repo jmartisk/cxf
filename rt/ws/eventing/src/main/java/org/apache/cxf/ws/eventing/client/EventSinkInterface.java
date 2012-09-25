@@ -1,4 +1,4 @@
-package org.apache.cxf.ws.eventing.subscription.client;
+package org.apache.cxf.ws.eventing.client;
 
 import org.apache.cxf.ws.eventing.EventingConstants;
 import org.apache.cxf.ws.eventing.SubscriptionEnd;

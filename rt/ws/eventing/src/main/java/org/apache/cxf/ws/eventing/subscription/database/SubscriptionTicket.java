@@ -1,11 +1,10 @@
-package org.apache.cxf.ws.eventing.subscription;
+package org.apache.cxf.ws.eventing.subscription.database;
 
-import org.apache.cxf.ws.eventing.DeliveryType;
-import org.apache.cxf.ws.eventing.EndpointReferenceType;
-import org.apache.cxf.ws.eventing.ExpirationType;
-import org.apache.cxf.ws.eventing.FilterType;
+import org.apache.cxf.ws.eventing.*;
 import org.apache.cxf.ws.eventing.faults.FilteringRequestedUnavailable;
 import org.apache.cxf.ws.eventing.utils.FilteringUtil;
+
+import java.util.UUID;
 
 /**
  * @author jmartisk
@@ -20,6 +19,8 @@ public class SubscriptionTicket {
     private DeliveryType delivery;
     private ExpirationType expires;
     private FilterType filter;
+    private UUID uuid;
+
 
     public EndpointReferenceType getEndTo() {
         return endTo;
@@ -57,5 +58,13 @@ public class SubscriptionTicket {
 
     public boolean isExpired() {
         return false; // TODO
+    }
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 }
