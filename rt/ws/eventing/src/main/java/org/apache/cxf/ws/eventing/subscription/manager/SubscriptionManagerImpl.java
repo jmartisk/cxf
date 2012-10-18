@@ -15,6 +15,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import java.util.GregorianCalendar;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -76,10 +77,24 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
             Object expirationTypeValue = DurationAndDateUtil.parseDurationOrTimestamp(expirationTypeString);
             LOG.info("ExpirationType's class: " + expirationTypeValue.getClass());
             LOG.info("ExpirationType's toString: " + expirationTypeValue.toString());
-            if (expirationTypeValue instanceof javax.xml.datatype.Duration)
+            if (expirationTypeValue instanceof javax.xml.datatype.Duration) {
                 grantedExpiration.setValue(grantExpirationFor((javax.xml.datatype.Duration) expirationTypeValue).toString());
-            else if (expirationTypeValue instanceof XMLGregorianCalendar)
+
+                DatatypeFactory factory;
+                try {
+                    factory = DatatypeFactory.newInstance();
+                } catch (DatatypeConfigurationException e) {
+                    throw new RuntimeException(e);
+                }                             // TODO cleanup this mess:)
+                XMLGregorianCalendar effectiveExpiration = factory.newXMLGregorianCalendar(new GregorianCalendar());
+                effectiveExpiration.add((javax.xml.datatype.Duration)expirationTypeValue);
+                GregorianCalendar effective = effectiveExpiration.toGregorianCalendar();
+                ticket.setEffectiveExpiresDate(effective);
+            }
+            else if (expirationTypeValue instanceof XMLGregorianCalendar) {
                 grantedExpiration.setValue(grantExpirationFor((XMLGregorianCalendar) expirationTypeValue).toXMLFormat());
+                ticket.setEffectiveExpiresDate(((XMLGregorianCalendar)expirationTypeValue).toGregorianCalendar());
+            }
         } else { // no expirationTime request was made
             grantedExpiration.setValue(grantExpiration().toString());
         }

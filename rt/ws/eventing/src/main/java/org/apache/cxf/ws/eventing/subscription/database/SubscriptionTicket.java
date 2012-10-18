@@ -1,9 +1,13 @@
 package org.apache.cxf.ws.eventing.subscription.database;
 
-import org.apache.cxf.ws.eventing.*;
+import org.apache.cxf.ws.eventing.DeliveryType;
+import org.apache.cxf.ws.eventing.EndpointReferenceType;
+import org.apache.cxf.ws.eventing.ExpirationType;
+import org.apache.cxf.ws.eventing.FilterType;
 import org.apache.cxf.ws.eventing.faults.FilteringRequestedUnavailable;
 import org.apache.cxf.ws.eventing.utils.FilteringUtil;
 
+import java.util.GregorianCalendar;
 import java.util.UUID;
 
 /**
@@ -18,6 +22,7 @@ public class SubscriptionTicket {
     private EndpointReferenceType endTo;
     private DeliveryType delivery;
     private ExpirationType expires;
+    private GregorianCalendar effectiveExpiresDate;
     private FilterType filter;
     private UUID uuid;
 
@@ -57,7 +62,7 @@ public class SubscriptionTicket {
     }
 
     public boolean isExpired() {
-        return false; // TODO
+        return effectiveExpiresDate.after(new GregorianCalendar());
     }
 
     public void setUUID(UUID uuid) {
@@ -66,5 +71,13 @@ public class SubscriptionTicket {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public GregorianCalendar getEffectiveExpiresDate() {
+        return effectiveExpiresDate;
+    }
+
+    public void setEffectiveExpiresDate(GregorianCalendar effectiveExpiresDate) {
+        this.effectiveExpiresDate = effectiveExpiresDate;
     }
 }
