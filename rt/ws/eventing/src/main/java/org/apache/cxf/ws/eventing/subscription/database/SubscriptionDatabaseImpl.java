@@ -1,6 +1,7 @@
 package org.apache.cxf.ws.eventing.subscription.database;
 
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.ws.eventing.faults.UnknownSubscription;
 
 import java.util.List;
 import java.util.UUID;
@@ -45,6 +46,19 @@ public class SubscriptionDatabaseImpl implements SubscriptionDatabase {
                 return ticket;
         }
         return null;
+    }
+
+    @Override
+    public void removeTicketByUUID(UUID id) {
+        boolean removed = false;
+        for(SubscriptionTicket ticket : ticketList) {
+            if(ticket.getUuid().equals(id)) {
+                ticketList.remove(ticket);
+                removed = true;
+            }
+        }
+        if(!removed)
+            throw new UnknownSubscription();
     }
 
 }

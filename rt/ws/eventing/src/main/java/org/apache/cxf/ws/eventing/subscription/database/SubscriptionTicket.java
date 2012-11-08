@@ -59,7 +59,7 @@ public class SubscriptionTicket {
     }
 
     public boolean isExpired() {
-        return expires.toGregorianCalendar().after(new GregorianCalendar());
+        return expires.toGregorianCalendar().before(new GregorianCalendar());
     }
 
     public EndpointReferenceType getSubscriptionManagerReference() {

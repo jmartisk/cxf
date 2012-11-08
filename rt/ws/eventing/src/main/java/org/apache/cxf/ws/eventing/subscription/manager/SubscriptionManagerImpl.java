@@ -4,6 +4,7 @@ import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.*;
 import org.apache.cxf.ws.eventing.faults.FilteringRequestedUnavailable;
 import org.apache.cxf.ws.eventing.faults.NoDeliveryMechanismEstablished;
+import org.apache.cxf.ws.eventing.faults.UnknownSubscription;
 import org.apache.cxf.ws.eventing.subscription.database.SubscriptionDatabase;
 import org.apache.cxf.ws.eventing.subscription.database.SubscriptionDatabaseImpl;
 import org.apache.cxf.ws.eventing.subscription.database.SubscriptionTicket;
@@ -15,7 +16,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -28,7 +31,8 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
     public static final String SUBSCRIPTION_ID_NAMESPACE = "http://www.example.com";
     public static final String SUBSCRIPTION_ID = "SubscriptionID";
 
-    private SubscriptionDatabase database;
+
+    protected SubscriptionDatabase database;
 
     public SubscriptionManagerImpl() {
         database = new SubscriptionDatabaseImpl();
@@ -50,9 +54,12 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         return response;
     }
 
-
     @Override
-    public SubscriptionDatabase getDatabase() {
+    public List<SubscriptionTicket> getTickets() {
+        return Collections.unmodifiableList(database.getTickets());
+    }
+
+    protected SubscriptionDatabase getDatabase() {
         return database;
     }
 
@@ -76,7 +83,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
      */
     protected void processExpiration(ExpirationType request, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
         XMLGregorianCalendar granted;
-        if(request != null) {
+        if (request != null) {
             Object expirationTypeValue = DurationAndDateUtil.parseDurationOrTimestamp(request.getValue());
             if (expirationTypeValue instanceof javax.xml.datatype.Duration) {
                 granted = grantExpirationFor((javax.xml.datatype.Duration) expirationTypeValue);
@@ -104,7 +111,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
     }
 
     protected void processDelivery(DeliveryType request, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
-        if(request == null) {
+        if (request == null) {
             throw new NoDeliveryMechanismEstablished();
         }
         ticket.setDelivery(request);
@@ -126,11 +133,11 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
     }
 
 
-    protected XMLGregorianCalendar grantExpirationFor(XMLGregorianCalendar requested) {
+    public XMLGregorianCalendar grantExpirationFor(XMLGregorianCalendar requested) {
         return requested;   // default
     }
 
-    protected XMLGregorianCalendar grantExpirationFor(javax.xml.datatype.Duration requested) {
+    public XMLGregorianCalendar grantExpirationFor(javax.xml.datatype.Duration requested) {
         XMLGregorianCalendar granted;
         try {
             granted = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
@@ -141,7 +148,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         return granted;
     }
 
-    protected XMLGregorianCalendar grantExpiration() {
+    public XMLGregorianCalendar grantExpiration() {
         try {
             return DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());  // default
         } catch (DatatypeConfigurationException ex) {
@@ -154,6 +161,43 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         AttributedURIType ret = new AttributedURIType();
         ret.setValue("http://localhost:8080/test1/TestSubscriptionManager");
         return ret;
+    }
+
+    @Override
+    public void unsubscribeTicket(UUID uuid) {
+        getDatabase().removeTicketByUUID(uuid);
+    }
+
+    @Override
+    public SubscriptionTicket findTicket(UUID uuid) {
+        return getDatabase().findById(uuid);
+    }
+
+    @Override
+    public ExpirationType renew(UUID uuid, ExpirationType requestedExpiration) {
+        LOG.info("Requested renew expiration: " + requestedExpiration.getValue());
+        SubscriptionTicket ticket = getDatabase().findById(uuid);
+        if(ticket == null)
+            throw new UnknownSubscription();
+        LOG.info("Current expiration: " + ticket.getExpires().toXMLFormat());
+        ExpirationType response = new ExpirationType();
+        XMLGregorianCalendar grantedExpires;
+        if (DurationAndDateUtil.isDuration(requestedExpiration.getValue())) {
+            // duration was requested
+            javax.xml.datatype.Duration requestedDuration = DurationAndDateUtil.parseDuration(requestedExpiration.getValue());
+            javax.xml.datatype.Duration grantedDuration = requestedDuration;
+            LOG.info("Granted renewal duration: " + grantedDuration.toString());
+            grantedExpires = getDatabase().findById(uuid).getExpires();       // NOW() or current Expires() ????
+            grantedExpires.add(grantedDuration);
+            response.setValue(grantedDuration.toString());
+        } else {
+            // end-date was requested
+            grantedExpires = DurationAndDateUtil.parseXMLGregorianCalendar(requestedExpiration.getValue());
+            LOG.info("Granted expiration: " + grantedExpires.toXMLFormat());
+            response.setValue(grantedExpires.toXMLFormat());
+        }
+        getDatabase().findById(uuid).setExpires(grantedExpires);
+        return response;
     }
 
 }

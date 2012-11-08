@@ -4,6 +4,9 @@ import org.apache.cxf.ws.eventing.DeliveryType;
 import org.apache.cxf.ws.eventing.EndpointReferenceType;
 import org.apache.cxf.ws.eventing.ExpirationType;
 import org.apache.cxf.ws.eventing.FilterType;
+import org.apache.cxf.ws.eventing.subscription.database.SubscriptionTicket;
+
+import java.util.List;
 
 /**
  * @author jmartisk
@@ -12,5 +15,10 @@ import org.apache.cxf.ws.eventing.FilterType;
 public interface SubscriptionManagerInterfaceForEventSources {
 
     SubscriptionTicketGrantingResponse subscribe(DeliveryType delivery, EndpointReferenceType endTo, ExpirationType expires, FilterType filter);
+
+    /**
+     * READ ONLY. Returns an unmodifiable list of the subscriptions in database.
+     */
+    List<SubscriptionTicket> getTickets();
 
 }

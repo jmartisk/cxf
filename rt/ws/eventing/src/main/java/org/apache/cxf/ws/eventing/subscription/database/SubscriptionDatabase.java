@@ -15,4 +15,6 @@ public interface SubscriptionDatabase {
 
     public SubscriptionTicket findById(UUID id);
 
+    public void removeTicketByUUID(UUID id);
+
 }

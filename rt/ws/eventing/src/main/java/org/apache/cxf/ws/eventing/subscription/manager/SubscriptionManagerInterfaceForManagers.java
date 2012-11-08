@@ -1,6 +1,9 @@
 package org.apache.cxf.ws.eventing.subscription.manager;
 
-import org.apache.cxf.ws.eventing.subscription.database.SubscriptionDatabase;
+import org.apache.cxf.ws.eventing.ExpirationType;
+import org.apache.cxf.ws.eventing.subscription.database.SubscriptionTicket;
+
+import java.util.UUID;
 
 /**
  * @author jmartisk
@@ -8,6 +11,8 @@ import org.apache.cxf.ws.eventing.subscription.database.SubscriptionDatabase;
  */
 public interface SubscriptionManagerInterfaceForManagers extends SubscriptionManagerInterfaceForEventSources {
 
-    public SubscriptionDatabase getDatabase();
+    public void unsubscribeTicket(UUID uuid);
+    public SubscriptionTicket findTicket(UUID uuid);
+    public ExpirationType renew(UUID uuid, ExpirationType requestedExpiration);
 
 }

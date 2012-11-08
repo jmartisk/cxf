@@ -24,7 +24,7 @@ public class FilteringUtil {
     }
 
     public static boolean doesConformToFilter(Element elm, FilterType filter) {
-        if(filter.getContent() == null)
+        if((filter == null) || (filter.getContent() == null))
             return true;
         String xPathString = (String)filter.getContent().get(0);
         try {

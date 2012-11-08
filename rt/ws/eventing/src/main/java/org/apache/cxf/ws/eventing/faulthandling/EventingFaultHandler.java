@@ -6,9 +6,9 @@ import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.ws.addressing.AddressingProperties;
+import org.apache.cxf.ws.addressing.AttributedURIType;
 import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.soap.DecoupledFaultHandler;
-import org.apache.cxf.ws.addressing.AttributedURIType;
 import org.apache.cxf.ws.eventing.EventingConstants;
 
 import java.util.logging.Logger;

@@ -1,7 +1,6 @@
 package org.apache.cxf.ws.eventing.soaphandler;
 
 import org.apache.cxf.common.logging.LogUtils;
-import org.apache.cxf.ws.eventing.faults.UnknownSubscription;
 import org.apache.cxf.ws.eventing.subscription.manager.SubscriptionManagerImpl;
 import org.w3c.dom.Element;
 
@@ -41,10 +40,12 @@ public class EventingSoapHandler implements SOAPHandler<SOAPMessageContext> {
         if((Boolean)context.get (MessageContext.MESSAGE_OUTBOUND_PROPERTY))
             return true;
         try {
+//            List referenceParams = (List)context.get(MessageContext.REFERENCE_PARAMETERS);              TODO: this is better
+
             // read headers
            Iterator headerElements = context.getMessage().getSOAPHeader().examineAllHeaderElements();
            Element o;
-           boolean found_uuid = false;
+//           boolean found_uuid = false;
            LOG.finer("Examining header elements");
            while(headerElements.hasNext()) {
                o = (Element)headerElements.next();
@@ -52,11 +53,11 @@ public class EventingSoapHandler implements SOAPHandler<SOAPMessageContext> {
                   o.getLocalName().equals(SubscriptionManagerImpl.SUBSCRIPTION_ID)) {
                    LOG.fine("found UUID parameter in header, uuid="+o.getTextContent());
                    context.put("uuid", o.getTextContent());
-                   found_uuid = true;
+//                   found_uuid = true;
                }
            }
-           if(!found_uuid)
-               throw new UnknownSubscription();
+//           if(!found_uuid)
+//               throw new UnknownSubscription();
         } catch (SOAPException e) {
             throw new RuntimeException(e);
         }
