@@ -26,13 +26,13 @@ import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.local.LocalTransportFactory;
-import org.apache.cxf.ws.eventing.service.AbstractEventSource;
-import org.apache.cxf.ws.eventing.service.AbstractSubscriptionManager;
-import org.apache.cxf.ws.eventing.service.EventSourceEndpoint;
-import org.apache.cxf.ws.eventing.subscription.manager.SubscriptionManagerInterfaceForManagers;
-import org.apache.cxf.ws.eventing.subscription.manager.SubscriptionManagerInterfaceForEventSources;
-import org.apache.cxf.ws.eventing.subscription.manager.aux.SingletonSubscriptionManagerContainer;
-import org.apache.cxf.ws.eventing.utils.DurationAndDateUtil;
+import org.apache.cxf.ws.eventing.eventsource.AbstractEventSource;
+import org.apache.cxf.ws.eventing.manager.AbstractSubscriptionManager;
+import org.apache.cxf.ws.eventing.eventsource.EventSourceEndpoint;
+import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerInterfaceForManagers;
+import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerInterfaceForEventSources;
+import org.apache.cxf.ws.eventing.backend.manager.aux.SingletonSubscriptionManagerContainer;
+import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -52,7 +52,7 @@ public class SubscriberSideTest {
 
     private EventSourceEndpoint client;
 
-    @WebService(endpointInterface = "org.apache.cxf.ws.eventing.service.EventSourceEndpoint")
+    @WebService(endpointInterface = "org.apache.cxf.ws.eventing.eventsource.EventSourceEndpoint")
     public static class TestingEventSource extends AbstractEventSource {
 
 
@@ -67,7 +67,7 @@ public class SubscriberSideTest {
         }
     }
 
-    @WebService(endpointInterface = "org.apache.cxf.ws.eventing.service.SubscriptionManagerEndpoint")
+    @WebService(endpointInterface = "org.apache.cxf.ws.eventing.manager.SubscriptionManagerEndpoint")
     public static class TestingSubscriptionManager extends AbstractSubscriptionManager {
 
         @Override

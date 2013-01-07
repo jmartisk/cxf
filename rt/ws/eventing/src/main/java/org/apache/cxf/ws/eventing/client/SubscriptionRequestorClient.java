@@ -5,7 +5,7 @@ import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.eventing.Subscribe;
 import org.apache.cxf.ws.eventing.SubscribeResponse;
-import org.apache.cxf.ws.eventing.service.EventSourceEndpoint;
+import org.apache.cxf.ws.eventing.eventsource.EventSourceEndpoint;
 
 import java.io.IOException;
 

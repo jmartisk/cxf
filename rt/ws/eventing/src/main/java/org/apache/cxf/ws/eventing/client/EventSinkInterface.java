@@ -1,6 +1,6 @@
 package org.apache.cxf.ws.eventing.client;
 
-import org.apache.cxf.ws.eventing.EventingConstants;
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
 import org.apache.cxf.ws.eventing.SubscriptionEnd;
 
 import javax.jws.Oneway;
@@ -11,8 +11,7 @@ import javax.xml.ws.Action;
 import javax.xml.ws.soap.Addressing;
 
 /**
- * @author jmartisk
- * @since 9/3/12
+ *
  */
 @WebService
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)

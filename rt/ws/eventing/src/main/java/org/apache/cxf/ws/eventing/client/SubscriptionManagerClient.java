@@ -3,9 +3,15 @@ package org.apache.cxf.ws.eventing.client;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.ws.eventing.*;
-import org.apache.cxf.ws.eventing.handlers.SubscriptionReferenceAddingHandler;
-import org.apache.cxf.ws.eventing.service.SubscriptionManagerEndpoint;
+import org.apache.cxf.ws.eventing.GetStatus;
+import org.apache.cxf.ws.eventing.GetStatusResponse;
+import org.apache.cxf.ws.eventing.ReferenceParametersType;
+import org.apache.cxf.ws.eventing.Renew;
+import org.apache.cxf.ws.eventing.RenewResponse;
+import org.apache.cxf.ws.eventing.Unsubscribe;
+import org.apache.cxf.ws.eventing.UnsubscribeResponse;
+import org.apache.cxf.ws.eventing.manager.SubscriptionManagerEndpoint;
+import org.apache.cxf.ws.eventing.shared.handlers.SubscriptionReferenceAddingHandler;
 
 /**
  * This is an example client for communicating with a remote Subscription Manager.

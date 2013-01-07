@@ -1,7 +1,7 @@
 package org.apache.cxf.ws.eventing;
 
 import org.apache.cxf.helpers.DOMUtils;
-import org.apache.cxf.ws.eventing.utils.FilteringUtil;
+import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
