@@ -4,7 +4,7 @@ import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.eventing.*;
-import org.apache.cxf.ws.eventing.handlers.SubscriptionAddingHandler;
+import org.apache.cxf.ws.eventing.handlers.SubscriptionReferenceAddingHandler;
 import org.apache.cxf.ws.eventing.service.SubscriptionManagerEndpoint;
 
 /**
@@ -22,7 +22,7 @@ public class SubscriptionManagerClient {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(SubscriptionManagerEndpoint.class);
         factory.setAddress(SUBSCRIPTION_MANAGER_URL);
-        SubscriptionAddingHandler handler = new SubscriptionAddingHandler(subscriptionReferenceParams);
+        SubscriptionReferenceAddingHandler handler = new SubscriptionReferenceAddingHandler(subscriptionReferenceParams);
         factory.getHandlers().add(handler);
         factory.getOutInterceptors().add(new LoggingOutInterceptor()); //debug
         factory.getInInterceptors().add(new LoggingInInterceptor());          // debug

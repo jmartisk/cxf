@@ -1,4 +1,4 @@
-package org.apache.cxf.ws.eventing.soaphandler;
+package org.apache.cxf.ws.eventing.handlers;
 
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.subscription.manager.SubscriptionManagerImpl;
@@ -17,9 +17,9 @@ import java.util.logging.Logger;
  * @author jmartisk
  * @since 9/12/12
  */
-public class EventingSoapHandler implements SOAPHandler<SOAPMessageContext> {
+public class SubscriptionReferenceParsingHandler implements SOAPHandler<SOAPMessageContext> {
 
-    private static final Logger LOG = LogUtils.getLogger(EventingSoapHandler.class);
+    private static final Logger LOG = LogUtils.getLogger(SubscriptionReferenceParsingHandler.class);
 
     // is outbound/inbound?
     /*

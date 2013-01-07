@@ -16,11 +16,11 @@ import java.util.Set;
  * @author jmartisk
  * @since 11/8/12
  */
-public class SubscriptionAddingHandler implements SOAPHandler<SOAPMessageContext> {
+public class SubscriptionReferenceAddingHandler implements SOAPHandler<SOAPMessageContext> {
 
     private final ReferenceParametersType params;
 
-    public SubscriptionAddingHandler(ReferenceParametersType parametersType) {
+    public SubscriptionReferenceAddingHandler(ReferenceParametersType parametersType) {
         this.params = parametersType;
     }
 
@@ -32,6 +32,9 @@ public class SubscriptionAddingHandler implements SOAPHandler<SOAPMessageContext
 
     @Override
     public boolean handleMessage(SOAPMessageContext context) {
+        // we are interested only in outbound messages here
+        if(!(Boolean)context.get (MessageContext.MESSAGE_OUTBOUND_PROPERTY))
+            return true;
         try {
             SOAPFactory factory = SOAPFactory.newInstance();
             for(Object o : params.getAny()) {

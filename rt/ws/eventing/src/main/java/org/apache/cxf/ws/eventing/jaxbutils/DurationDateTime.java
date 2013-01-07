@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @since 9/11/12
  */
 @XmlJavaTypeAdapter(DurationDateTimeAdapter.class)
+@Deprecated
 public class DurationDateTime {
 
     private final Object value;

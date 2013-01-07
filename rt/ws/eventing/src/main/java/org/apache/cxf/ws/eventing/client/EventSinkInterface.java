@@ -19,7 +19,7 @@ import javax.xml.ws.soap.Addressing;
 @Addressing(enabled = true, required = true)
 public interface EventSinkInterface {
 
-    @Oneway
+    @Oneway                              // TODO: JAXBElement
     public void notification(@WebParam Object notification);
 
     @Oneway

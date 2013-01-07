@@ -36,7 +36,7 @@ public abstract class EmitterServlet extends HttpServlet {
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(req.getParameter(PARAM_PAYLOAD)));
             Document doc = db.parse(is);
-            getService().dispatch(new java.net.URI("http://awesome-action"), doc.getDocumentElement());
+            getService().dispatch(new java.net.URI("http://awesome-action-TODO"), doc.getDocumentElement());
         } catch (ParserConfigurationException e) {
 
         } catch (SAXException e) {

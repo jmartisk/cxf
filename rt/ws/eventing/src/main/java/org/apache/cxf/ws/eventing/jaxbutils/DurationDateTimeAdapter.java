@@ -10,6 +10,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @author jmartisk
  * @since 9/11/12
  */
+@Deprecated
 public class DurationDateTimeAdapter extends XmlAdapter<String,DurationDateTime> {
 
 

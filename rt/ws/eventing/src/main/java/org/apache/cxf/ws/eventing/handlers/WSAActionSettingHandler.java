@@ -25,8 +25,11 @@ public class WSAActionSettingHandler implements SOAPHandler<SOAPMessageContext> 
 
     @Override
     public boolean handleMessage(SOAPMessageContext context) {
+        // we are interested only in outbound messages here
+        if (!(Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))
+            return true;
         //TODO
-       return true;
+        return true;
     }
 
     @Override

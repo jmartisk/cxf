@@ -3,9 +3,10 @@ package org.apache.cxf.ws.eventing.service;
 import org.apache.cxf.feature.Features;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.interceptor.OutInterceptors;
-import org.apache.cxf.ws.eventing.*;
+import org.apache.cxf.ws.eventing.EventingConstants;
+import org.apache.cxf.ws.eventing.Subscribe;
+import org.apache.cxf.ws.eventing.SubscribeResponse;
 
-import javax.jws.HandlerChain;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
@@ -31,7 +32,7 @@ public interface EventSourceEndpoint {
     @Action(
             input = EventingConstants.ACTION_SUBSCRIBE,
             output = EventingConstants.ACTION_SUBSCRIBE_RESPONSE/*,
-              fault = @FaultAction(
+            fault = @FaultAction(
                     className = IOException.class, value = EventingConstants.ACTION_FAULT
             )*/
     )
