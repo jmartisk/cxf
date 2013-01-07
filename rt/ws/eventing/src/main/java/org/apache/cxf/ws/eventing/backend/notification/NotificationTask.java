@@ -9,7 +9,10 @@ import org.apache.cxf.ws.eventing.client.EventSinkInterface;
 import org.apache.cxf.ws.eventing.shared.handlers.SubscriptionReferenceAddingHandler;
 import org.apache.cxf.ws.eventing.shared.handlers.WSAActionSettingHandler;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 import java.net.URI;
 import java.util.logging.Logger;
@@ -38,7 +41,7 @@ class NotificationTask implements Runnable {
     public void run() {
         LOG.info("Starting notification task for subscription UUID " + target.getUuid());
 
-        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+ /*       JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(EventSinkInterface.class);
         factory.setAddress("http://localhost:8060"); // TODO <- subscriber address
 
@@ -53,7 +56,21 @@ class NotificationTask implements Runnable {
         factory.getInInterceptors().add(new LoggingInInterceptor());          // debug
 
         EventSinkInterface endpoint = (EventSinkInterface)factory.create();
-        endpoint.notification(message);
+        endpoint.notification(message);*/
+        try {
+            Document document = message.getOwnerDocument();
+            DOMImplementationLS domImplLS = (DOMImplementationLS) document
+                    .getImplementation();
+            LSSerializer serializer = domImplLS.createLSSerializer();
+            String str = serializer.writeToString(message);
+            LOG.info("SENDING TO " + target.getDelivery().getContent().get(0) + ": \n" +
+                    str);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+
+
 
 
        /* String eventXML = DOMWriter.printNode(event, false);

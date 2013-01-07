@@ -154,8 +154,10 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
     }
 
     public XMLGregorianCalendar grantExpiration() {
-        try {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());  // default
+        try { // by default, we grant an expiration time of 2 years
+            GregorianCalendar granted = new GregorianCalendar();
+            granted.add(GregorianCalendar.YEAR, 2);
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(granted);
         } catch (DatatypeConfigurationException ex) {
             throw new Error(ex);
         }

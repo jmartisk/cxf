@@ -43,13 +43,21 @@ public abstract class NotificatorService {
      * @throws IllegalStateException if this NotificatorService is not started
      */
     public void dispatch(URI eventAction, Element message) {
+        LOG.info("NotificatorService received an event with payload: " + message);
         if(service == null) {
             throw new IllegalStateException("NotificatorService is not started. " +
                     "Please call the start() method before passing any events to it.");
         }
         for(SubscriptionTicket ticket : obtainSubscriptions()) {
-            if(FilteringUtil.doesConformToFilter(message, ticket.getFilter()) && !ticket.isExpired()) {
-                service.submit(new NotificationTask(ticket, eventAction, message));
+            LOG.info("ticket: " + ticket.getUuid());
+            if(FilteringUtil.doesConformToFilter(message, ticket.getFilter())) {
+                if(!ticket.isExpired()) {
+                    service.submit(new NotificationTask(ticket, eventAction, message));
+                } else {
+                    LOG.info("Ticket expired at " + ticket.getExpires().toXMLFormat());
+                }
+            } else {
+                LOG.info("Filter " + ticket.getFilter() + " doesn't apply to this message.");
             }
         }
     }
