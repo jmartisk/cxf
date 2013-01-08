@@ -5,11 +5,14 @@ import org.apache.cxf.ws.eventing.DeliveryType;
 import org.apache.cxf.ws.eventing.EndpointReferenceType;
 import org.apache.cxf.ws.eventing.ExpirationType;
 import org.apache.cxf.ws.eventing.FilterType;
+import org.apache.cxf.ws.eventing.FormatType;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
 import org.apache.cxf.ws.eventing.AttributedURIType;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionDatabase;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionDatabaseImpl;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
+import org.apache.cxf.ws.eventing.shared.faults.DeliveryFormatRequestedUnavailable;
 import org.apache.cxf.ws.eventing.shared.faults.FilteringRequestedUnavailable;
 import org.apache.cxf.ws.eventing.shared.faults.NoDeliveryMechanismEstablished;
 import org.apache.cxf.ws.eventing.shared.faults.UnknownSubscription;
@@ -47,13 +50,14 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
 
     @Override
-    public SubscriptionTicketGrantingResponse subscribe(DeliveryType delivery, EndpointReferenceType endTo, ExpirationType expires, FilterType filter) {
+    public SubscriptionTicketGrantingResponse subscribe(DeliveryType delivery, EndpointReferenceType endTo, ExpirationType expires, FilterType filter, FormatType format) {
         SubscriptionTicket ticket = new SubscriptionTicket();
         SubscriptionTicketGrantingResponse response = new SubscriptionTicketGrantingResponse();
         processDelivery(delivery, ticket, response);
         processEndTo(endTo, ticket, response);
         processExpiration(expires, ticket, response);
         processFilters(filter, ticket, response);
+        processFormat(format, ticket, response);
         grantSubscriptionManagerReference(ticket, response);
         getDatabase().addTicket(ticket);
         return response;
@@ -66,6 +70,23 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
     protected SubscriptionDatabase getDatabase() {
         return database;
+    }
+
+    protected void processFormat(FormatType format, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
+        if(format == null) {
+            ticket.setWrappedDelivery(false);
+            return;
+        }
+        if(format.getName().equals(EventingConstants.DELIVERY_FORMAT_WRAPPED)) {
+            LOG.info("Wrapped delivery format was requested.");
+            ticket.setWrappedDelivery(true);
+        } else if(format.getName().equals(EventingConstants.DELIVERY_FORMAT_UNWRAPPED)) {
+            LOG.info("Wrapped delivery format was NOT requested.");
+            ticket.setWrappedDelivery(false);
+        } else {
+            LOG.info("Unknown delivery format: " + format.getName());
+            throw new DeliveryFormatRequestedUnavailable();
+        }
     }
 
     protected void processFilters(FilterType request, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {

@@ -1,8 +1,7 @@
 package org.apache.cxf.ws.eventing.shared;
 
 /**
- * @author jmartisk
- * @since 8/27/12
+ * This class contains String constants needed for WS-Eventing.
  */
 public class EventingConstants {
 
@@ -33,4 +32,8 @@ public class EventingConstants {
     public static final String RESPONSE_UNSUBSCRIBE = "UnsubscribeResponse";
     public static final String OPERATION_UNSUBSCRIBE = "Unsubscribe";
     public static final String ACTION_SUBSCRIPTION_END = "http://www.w3.org/2011/03/ws-evt/SubscriptionEnd";
+
+    public static final String DELIVERY_FORMAT_WRAPPED = "http://www.w3.org/2009/09/ws-evt/DeliveryFormats/Wrap";
+    public static final String DELIVERY_FORMAT_UNWRAPPED = "http://www.w3.org/2011/03/ws-evt/DeliveryFormats/Unwrap";
+
 }

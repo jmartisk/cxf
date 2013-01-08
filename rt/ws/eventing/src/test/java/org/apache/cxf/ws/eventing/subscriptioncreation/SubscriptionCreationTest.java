@@ -1,4 +1,4 @@
-package org.apache.cxf.ws.eventing;
+package org.apache.cxf.ws.eventing.subscriptioncreation;
 
 /**
  * @author jmartisk

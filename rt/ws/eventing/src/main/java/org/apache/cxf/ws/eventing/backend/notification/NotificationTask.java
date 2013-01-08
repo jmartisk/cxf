@@ -63,7 +63,7 @@ class NotificationTask implements Runnable {
                     .getImplementation();
             LSSerializer serializer = domImplLS.createLSSerializer();
             String str = serializer.writeToString(message);
-            LOG.info("SENDING TO " + target.getDelivery().getContent().get(0) + ": \n" +
+            LOG.info("SENDING TO " + target.getTargetURL() + ": \n" +
                     str);
         } catch(Exception e) {
             e.printStackTrace();

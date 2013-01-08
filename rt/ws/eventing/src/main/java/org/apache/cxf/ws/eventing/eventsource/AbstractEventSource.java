@@ -28,7 +28,7 @@ public abstract class AbstractEventSource implements EventSourceEndpoint {
 
     @Override
     public SubscribeResponse subscribeOp(Subscribe body) {
-        SubscriptionTicketGrantingResponse databaseResponse = getSubscriptionManagerBackend().subscribe(body.getDelivery(), body.getEndTo(), body.getExpires(), body.getFilter());
+        SubscriptionTicketGrantingResponse databaseResponse = getSubscriptionManagerBackend().subscribe(body.getDelivery(), body.getEndTo(), body.getExpires(), body.getFilter(), body.getFormat());
         boolean shouldConvertToDuration;
         if(body.getExpires() != null) {
             shouldConvertToDuration = DurationAndDateUtil.isDuration(body.getExpires().getValue());

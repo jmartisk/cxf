@@ -30,6 +30,7 @@ public class SubscriptionTicket {
     private FilterType filter;
     private EndpointReferenceType subscriptionManagerReference;
     private UUID uuid;
+    private boolean wrappedDelivery;
 
 
     public EndpointReferenceType getEndTo() {
@@ -80,5 +81,21 @@ public class SubscriptionTicket {
 
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    /**
+     * Convenience method to extract the subscribed target URL.
+     * @return
+     */
+    public String getTargetURL() {
+        return ((org.apache.cxf.ws.eventing.NotifyTo)this.getDelivery().getContent().get(0)).getValue().getAddress().getValue().trim();
+    }
+
+    public boolean isWrappedDelivery() {
+        return wrappedDelivery;
+    }
+
+    public void setWrappedDelivery(boolean wrappedDelivery) {
+        this.wrappedDelivery = wrappedDelivery;
     }
 }
