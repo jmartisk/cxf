@@ -159,21 +159,37 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
     }
 
 
+    /**
+     * Decide what expiration time to grant to the subscription, if
+     * the client specified a calendar time in the request.
+     */
     public XMLGregorianCalendar grantExpirationFor(XMLGregorianCalendar requested) {
         return requested;   // default
     }
 
+    /**
+     * Decide what expiration time to grant to the subscription, if
+     * the client specified a duration in the request.
+     */
     public XMLGregorianCalendar grantExpirationFor(javax.xml.datatype.Duration requested) {
         XMLGregorianCalendar granted;
         try {
             granted = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
+            if(DurationAndDateUtil.isPT0S(requested)) { // The client requested a non-expiring subscription. We will give them 5 years.
+                granted.add(DatatypeFactory.newInstance().newDurationYearMonth(true, 5, 0));
+            } else {
+                granted.add(requested); // default
+            }
+            return granted;
         } catch (DatatypeConfigurationException e) {
             throw new Error(e);
         }
-        granted.add(requested); // default
-        return granted;
     }
 
+    /**
+     * Decide what expiration time to grant to the subscription, if
+     * the client did not specify any particular wish for subscription length.
+     */
     public XMLGregorianCalendar grantExpiration() {
         try { // by default, we grant an expiration time of 2 years
             GregorianCalendar granted = new GregorianCalendar();

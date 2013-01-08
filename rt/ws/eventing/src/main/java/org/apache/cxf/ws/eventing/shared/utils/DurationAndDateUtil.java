@@ -84,4 +84,8 @@ public class DurationAndDateUtil {
         return et;
     }
 
+    public static boolean isPT0S(Duration duration) {
+        return duration.toString().equals("PT0S");
+    }
+
 }
