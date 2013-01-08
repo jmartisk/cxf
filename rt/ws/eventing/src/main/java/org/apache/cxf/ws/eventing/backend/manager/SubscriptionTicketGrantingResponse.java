@@ -48,8 +48,9 @@ public class SubscriptionTicketGrantingResponse {
     }
 
     public void setFilter(FilterType filter) {
-        if(!FilteringUtil.isFilteringDialectSupported(filter.getDialect()))
+        if (!FilteringUtil.isFilteringDialectSupported(filter.getDialect())) {
             throw new FilteringRequestedUnavailable();
+        }
         this.filter = filter;
     }
 

@@ -22,13 +22,14 @@ public class SubscriptionManagerClient {
     private SubscriptionManagerEndpoint endpoint;
 
 
-
-    public SubscriptionManagerClient(String SUBSCRIPTION_MANAGER_URL, ReferenceParametersType subscriptionReferenceParams) {
+    public SubscriptionManagerClient(String SUBSCRIPTION_MANAGER_URL,
+                                     ReferenceParametersType subscriptionReferenceParams) {
         this.SUBSCRIPTION_MANAGER_URL = SUBSCRIPTION_MANAGER_URL;
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(SubscriptionManagerEndpoint.class);
         factory.setAddress(SUBSCRIPTION_MANAGER_URL);
-        SubscriptionReferenceAddingHandler handler = new SubscriptionReferenceAddingHandler(subscriptionReferenceParams);
+        SubscriptionReferenceAddingHandler handler = new SubscriptionReferenceAddingHandler(
+                subscriptionReferenceParams);
         factory.getHandlers().add(handler);
         factory.getOutInterceptors().add(new LoggingOutInterceptor()); //debug
         factory.getInInterceptors().add(new LoggingInInterceptor());          // debug

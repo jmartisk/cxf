@@ -1,6 +1,7 @@
 package org.apache.cxf.ws.eventing.shared.faults;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebFault;
 
 /**
  * @author jmartisk

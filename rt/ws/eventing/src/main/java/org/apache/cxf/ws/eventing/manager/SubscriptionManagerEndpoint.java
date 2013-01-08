@@ -17,6 +17,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.Action;
+import javax.xml.ws.FaultAction;
 import javax.xml.ws.soap.Addressing;
 
 /**
@@ -25,11 +26,14 @@ import javax.xml.ws.soap.Addressing;
  */
 @WebService(targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@Addressing(enabled=true, required=true)
-@Features(features = {"org.apache.cxf.ws.eventing.shared.faulthandling.EventingFaultHandlingFeature"})    // TODO:remove? :(
-        // ^ the preferred solution is with @FaultAction-s, why doesn't it work? ^
-@InInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingInInterceptor") // TODO for debugging purposes. To be removed later
-@OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor") // TODO for debugging purposes. To be removed later
+@Addressing(enabled = true, required = true)
+@Features(features = {"org.apache.cxf.ws.eventing.shared.faulthandling.EventingFaultHandlingFeature"})
+// TODO:remove? :(
+// ^ the preferred solution is with @FaultAction-s, why doesn't it work? ^
+@InInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingInInterceptor")
+// TODO for debugging purposes. To be removed later
+@OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor")
+// TODO for debugging purposes. To be removed later
 @HandlerChain(file = "/eventing-handler-chain.xml")
 public interface SubscriptionManagerEndpoint {
 
@@ -40,9 +44,11 @@ public interface SubscriptionManagerEndpoint {
                     className = SoapFault.class, value = EventingConstants.ACTION_FAULT
             )*/
     )
-    public @WebResult(name = EventingConstants.RESPONSE_RENEW)
+    public
+    @WebResult(name = EventingConstants.RESPONSE_RENEW)
     RenewResponse renewOp(
-            @WebParam(name = EventingConstants.OPERATION_RENEW, targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE, partName = "body")
+            @WebParam(name = EventingConstants.OPERATION_RENEW,
+                    targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE, partName = "body")
             Renew body
     );
 
@@ -53,22 +59,25 @@ public interface SubscriptionManagerEndpoint {
                     className = SoapFault.class, value = EventingConstants.ACTION_FAULT
             )*/
     )
-    public @WebResult(name = EventingConstants.RESPONSE_GET_STATUS)
+    public
+    @WebResult(name = EventingConstants.RESPONSE_GET_STATUS)
     GetStatusResponse getStatusOp(
-            @WebParam(name = EventingConstants.OPERATION_GET_STATUS, targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE, partName = "body")
+            @WebParam(name = EventingConstants.OPERATION_GET_STATUS,
+                    targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE, partName = "body")
             GetStatus body
     );
 
     @Action(
             input = EventingConstants.ACTION_UNSUBSCRIBE,
-            output = EventingConstants.ACTION_UNSUBSCRIBE_RESPONSE/*,
-            fault = @FaultAction(
+            output = EventingConstants.ACTION_UNSUBSCRIBE_RESPONSE
+         /*   fault = @FaultAction(
                     className = SoapFault.class, value = EventingConstants.ACTION_FAULT
             )*/
     )
-    public @WebResult(name = EventingConstants.RESPONSE_UNSUBSCRIBE)
+    @WebResult(name = EventingConstants.RESPONSE_UNSUBSCRIBE)
     UnsubscribeResponse unsubscribeOp(
-            @WebParam(name = EventingConstants.OPERATION_UNSUBSCRIBE, targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE, partName = "body")
+            @WebParam(name = EventingConstants.OPERATION_UNSUBSCRIBE,
+                    targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE, partName = "body")
             Unsubscribe body
     );
 

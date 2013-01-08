@@ -37,35 +37,39 @@ public class SubscriptionDatabaseImpl implements SubscriptionDatabase {
 
     /**
      * Searches the database for a ticket with the specified UUID
+     *
      * @param id the UUID which will be searched for
      * @return the ticket, or null of no ticket with this UUID exists
      */
     @Override
     public SubscriptionTicket findById(UUID id) {
-        for(SubscriptionTicket ticket : ticketList) {
-            if(ticket.getUuid().equals(id))
+        for (SubscriptionTicket ticket : ticketList) {
+            if (ticket.getUuid().equals(id)) {
                 return ticket;
+            }
         }
         return null;
     }
 
     /**
      * Removes a ticket by UUID from the database.
-     * @throws UnknownSubscription if unknown UUID is supplied
+     *
      * @param id the UUID of the ticket to remove
+     * @throws UnknownSubscription if unknown UUID is supplied
      */
     @Override
     public synchronized void removeTicketByUUID(UUID id) {
         boolean removed = false;
-        for(SubscriptionTicket ticket : ticketList) {
-            if(ticket.getUuid().equals(id)) {
+        for (SubscriptionTicket ticket : ticketList) {
+            if (ticket.getUuid().equals(id)) {
                 ticketList.remove(ticket);
                 removed = true;
                 break;
             }
         }
-        if(!removed)
+        if (!removed) {
             throw new UnknownSubscription();
+        }
     }
 
 }

@@ -18,9 +18,11 @@ public class DurationAndDateUtil {
 
     static {
         try {
-            factory =  DatatypeFactory.newInstance();
+            factory = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException ex) {
-            throw new RuntimeException("Cannot instantiate a DatatypeFactory required for unmarshalling to XMLGregorianCalendar and Duration", ex);
+            throw new RuntimeException(
+                    "Cannot instantiate a DatatypeFactory required for unmarshalling to XMLGregorianCalendar and Duration",
+                    ex);
         }
     }
 
@@ -28,7 +30,8 @@ public class DurationAndDateUtil {
         return factory.newDuration(input);
     }
 
-    public static XMLGregorianCalendar parseXMLGregorianCalendar(String input) throws IllegalArgumentException {
+    public static XMLGregorianCalendar parseXMLGregorianCalendar(String input)
+            throws IllegalArgumentException {
         return factory.newXMLGregorianCalendar(input);
     }
 
@@ -54,18 +57,21 @@ public class DurationAndDateUtil {
         Object ret;
         try {
             ret = factory.newDuration(input);
-        } catch(Exception e) {
+        } catch (Exception e) {
             ret = factory.newXMLGregorianCalendar(input);
         }
         return ret;
     }
 
     public static String convertToXMLString(Object input) {
-        if(input instanceof XMLGregorianCalendar)
+        if (input instanceof XMLGregorianCalendar) {
             return ((XMLGregorianCalendar)input).toXMLFormat();
-        if(input instanceof Duration)
+        }
+        if (input instanceof Duration) {
             return ((Duration)input).toString();
-        throw new IllegalArgumentException("convertToXMLString requires either an instance of XMLGregorianCalendar or Duration");
+        }
+        throw new IllegalArgumentException(
+                "convertToXMLString requires either an instance of XMLGregorianCalendar or Duration");
     }
 
     public static ExpirationType toExpirationTypeContainingGregorianCalendar(XMLGregorianCalendar date) {

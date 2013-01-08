@@ -28,9 +28,11 @@ public abstract class AbstractEventSource implements EventSourceEndpoint {
 
     @Override
     public SubscribeResponse subscribeOp(Subscribe body) {
-        SubscriptionTicketGrantingResponse databaseResponse = getSubscriptionManagerBackend().subscribe(body.getDelivery(), body.getEndTo(), body.getExpires(), body.getFilter(), body.getFormat());
+        SubscriptionTicketGrantingResponse databaseResponse = getSubscriptionManagerBackend()
+                .subscribe(body.getDelivery(), body.getEndTo(), body.getExpires(), body.getFilter(),
+                        body.getFormat());
         boolean shouldConvertToDuration;
-        if(body.getExpires() != null) {
+        if (body.getExpires() != null) {
             shouldConvertToDuration = DurationAndDateUtil.isDuration(body.getExpires().getValue());
         } else {
             shouldConvertToDuration = true;
@@ -42,15 +44,18 @@ public abstract class AbstractEventSource implements EventSourceEndpoint {
 
     protected abstract String getSubscriptionManagerURL();
 
-    protected SubscribeResponse generateResponseMessageFor(SubscriptionTicketGrantingResponse dbResponse, boolean shouldConvertToDuration) {
+    protected SubscribeResponse generateResponseMessageFor(SubscriptionTicketGrantingResponse dbResponse,
+                                                           boolean shouldConvertToDuration) {
         SubscribeResponse ret = new SubscribeResponse();
         // SubscriptionManager part
         ret.setSubscriptionManager(dbResponse.getSubscriptionManagerReference());
         // Expires part
-        if(shouldConvertToDuration) {
-            ret.setGrantedExpires(DurationAndDateUtil.toExpirationTypeContainingDuration(dbResponse.getExpires()));
+        if (shouldConvertToDuration) {
+            ret.setGrantedExpires(
+                    DurationAndDateUtil.toExpirationTypeContainingDuration(dbResponse.getExpires()));
         } else {
-            ret.setGrantedExpires(DurationAndDateUtil.toExpirationTypeContainingGregorianCalendar(dbResponse.getExpires()));
+            ret.setGrantedExpires(
+                    DurationAndDateUtil.toExpirationTypeContainingGregorianCalendar(dbResponse.getExpires()));
         }
         return ret;
     }

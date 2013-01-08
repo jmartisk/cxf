@@ -12,8 +12,9 @@ public class SingletonSubscriptionManagerContainer {
     private static SubscriptionManager INSTANCE;
 
     public static synchronized SubscriptionManager getInstance() {
-        if(INSTANCE == null)
+        if (INSTANCE == null) {
             INSTANCE = new SubscriptionManagerImpl();
+        }
         return INSTANCE;
     }
 

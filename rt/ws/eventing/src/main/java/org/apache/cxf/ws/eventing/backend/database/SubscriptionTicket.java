@@ -54,8 +54,9 @@ public class SubscriptionTicket {
     }
 
     public void setFilter(FilterType filter) {
-        if(!FilteringUtil.isFilteringDialectSupported(filter.getDialect()))
+        if (!FilteringUtil.isFilteringDialectSupported(filter.getDialect())) {
             throw new FilteringRequestedUnavailable();
+        }
         this.filter = filter;
     }
 
@@ -85,10 +86,12 @@ public class SubscriptionTicket {
 
     /**
      * Convenience method to extract the subscribed target URL.
+     *
      * @return
      */
     public String getTargetURL() {
-        return ((org.apache.cxf.ws.eventing.NotifyTo)this.getDelivery().getContent().get(0)).getValue().getAddress().getValue().trim();
+        return ((org.apache.cxf.ws.eventing.NotifyTo)this.getDelivery().getContent().get(0)).getValue()
+                .getAddress().getValue().trim();
     }
 
     public boolean isWrappedDelivery() {

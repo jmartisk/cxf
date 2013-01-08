@@ -9,6 +9,7 @@ import org.apache.cxf.ws.eventing.client.EventSinkInterface;
 import org.apache.cxf.ws.eventing.shared.handlers.SubscriptionReferenceAddingHandler;
 import org.apache.cxf.ws.eventing.shared.handlers.WSAActionSettingHandler;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -59,13 +60,13 @@ class NotificationTask implements Runnable {
         endpoint.notification(message);*/
         try {
             Document document = message.getOwnerDocument();
-            DOMImplementationLS domImplLS = (DOMImplementationLS) document
+            DOMImplementationLS domImplLS = (DOMImplementationLS)document
                     .getImplementation();
             LSSerializer serializer = domImplLS.createLSSerializer();
             String str = serializer.writeToString(message);
             LOG.info("SENDING TO " + target.getTargetURL() + ": \n" +
                     str);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

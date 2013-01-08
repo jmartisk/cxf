@@ -5,6 +5,7 @@ import org.apache.cxf.ws.eventing.FilterType;
 import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
 import org.junit.Assert;
 import org.junit.Test;
+
 import org.w3c.dom.Document;
 
 import java.io.CharArrayReader;

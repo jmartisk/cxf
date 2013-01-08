@@ -50,7 +50,9 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
 
     @Override
-    public SubscriptionTicketGrantingResponse subscribe(DeliveryType delivery, EndpointReferenceType endTo, ExpirationType expires, FilterType filter, FormatType format) {
+    public SubscriptionTicketGrantingResponse subscribe(DeliveryType delivery, EndpointReferenceType endTo,
+                                                        ExpirationType expires, FilterType filter,
+                                                        FormatType format) {
         SubscriptionTicket ticket = new SubscriptionTicket();
         SubscriptionTicketGrantingResponse response = new SubscriptionTicketGrantingResponse();
         processDelivery(delivery, ticket, response);
@@ -72,15 +74,16 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         return database;
     }
 
-    protected void processFormat(FormatType format, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
-        if(format == null) {
+    protected void processFormat(FormatType format, SubscriptionTicket ticket,
+                                 SubscriptionTicketGrantingResponse response) {
+        if (format == null) {
             ticket.setWrappedDelivery(false);
             return;
         }
-        if(format.getName().equals(EventingConstants.DELIVERY_FORMAT_WRAPPED)) {
+        if (format.getName().equals(EventingConstants.DELIVERY_FORMAT_WRAPPED)) {
             LOG.info("Wrapped delivery format was requested.");
             ticket.setWrappedDelivery(true);
-        } else if(format.getName().equals(EventingConstants.DELIVERY_FORMAT_UNWRAPPED)) {
+        } else if (format.getName().equals(EventingConstants.DELIVERY_FORMAT_UNWRAPPED)) {
             LOG.info("Wrapped delivery format was NOT requested.");
             ticket.setWrappedDelivery(false);
         } else {
@@ -89,7 +92,8 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         }
     }
 
-    protected void processFilters(FilterType request, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
+    protected void processFilters(FilterType request, SubscriptionTicket ticket,
+                                  SubscriptionTicketGrantingResponse response) {
         if (request != null) {
             // test if the requested filtering dialect is supported
             if (FilteringUtil.isFilteringDialectSupported(request.getDialect())) {
@@ -107,16 +111,17 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
     /**
      * process the stuff concerning expiration request (wse:Expires)
      */
-    protected void processExpiration(ExpirationType request, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
+    protected void processExpiration(ExpirationType request, SubscriptionTicket ticket,
+                                     SubscriptionTicketGrantingResponse response) {
         XMLGregorianCalendar granted;
         if (request != null) {
             Object expirationTypeValue = DurationAndDateUtil.parseDurationOrTimestamp(request.getValue());
             if (expirationTypeValue instanceof javax.xml.datatype.Duration) {
-                granted = grantExpirationFor((javax.xml.datatype.Duration) expirationTypeValue);
+                granted = grantExpirationFor((javax.xml.datatype.Duration)expirationTypeValue);
                 ticket.setExpires(granted);
                 response.setExpires(granted);
             } else if (expirationTypeValue instanceof XMLGregorianCalendar) {
-                granted = grantExpirationFor((XMLGregorianCalendar) expirationTypeValue);
+                granted = grantExpirationFor((XMLGregorianCalendar)expirationTypeValue);
                 ticket.setExpires(granted);
                 response.setExpires(granted);
             } else {
@@ -130,25 +135,29 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         LOG.info("Granted Expiration date: " + granted.toString());
     }
 
-    protected void processEndTo(EndpointReferenceType request, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
+    protected void processEndTo(EndpointReferenceType request, SubscriptionTicket ticket,
+                                SubscriptionTicketGrantingResponse response) {
         if (request != null) {
             ticket.setEndTo(request);
         }
     }
 
-    protected void processDelivery(DeliveryType request, SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
+    protected void processDelivery(DeliveryType request, SubscriptionTicket ticket,
+                                   SubscriptionTicketGrantingResponse response) {
         if (request == null) {
             throw new NoDeliveryMechanismEstablished();
         }
         ticket.setDelivery(request);
     }
 
-    protected void grantSubscriptionManagerReference(SubscriptionTicket ticket, SubscriptionTicketGrantingResponse response) {
+    protected void grantSubscriptionManagerReference(SubscriptionTicket ticket,
+                                                     SubscriptionTicketGrantingResponse response) {
         EndpointReferenceType subscriptionManagerReference = new EndpointReferenceType();
         subscriptionManagerReference.setAddress(getSubscriptionManagerAddress());
         // generate a ID for this subscription
         UUID uuid = UUID.randomUUID();
-        JAXBElement idqn = new JAXBElement(new QName(SUBSCRIPTION_ID_NAMESPACE, SUBSCRIPTION_ID), String.class,
+        JAXBElement idqn = new JAXBElement(new QName(SUBSCRIPTION_ID_NAMESPACE, SUBSCRIPTION_ID),
+                String.class,
                 uuid.toString());
         subscriptionManagerReference.setReferenceParameters(new ReferenceParametersType());
         subscriptionManagerReference.getReferenceParameters().getAny().add(idqn);
@@ -175,7 +184,8 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         XMLGregorianCalendar granted;
         try {
             granted = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
-            if(DurationAndDateUtil.isPT0S(requested)) { // The client requested a non-expiring subscription. We will give them 5 years.
+            if (DurationAndDateUtil
+                    .isPT0S(requested)) { // The client requested a non-expiring subscription. We will give them 5 years.
                 granted.add(DatatypeFactory.newInstance().newDurationYearMonth(true, 5, 0));
             } else {
                 granted.add(requested); // default
@@ -221,17 +231,20 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
     public ExpirationType renew(UUID uuid, ExpirationType requestedExpiration) {
         LOG.info("Requested renew expiration: " + requestedExpiration.getValue());
         SubscriptionTicket ticket = getDatabase().findById(uuid);
-        if(ticket == null)
+        if (ticket == null) {
             throw new UnknownSubscription();
+        }
         LOG.info("Current expiration: " + ticket.getExpires().toXMLFormat());
         ExpirationType response = new ExpirationType();
         XMLGregorianCalendar grantedExpires;
         if (DurationAndDateUtil.isDuration(requestedExpiration.getValue())) {
             // duration was requested
-            javax.xml.datatype.Duration requestedDuration = DurationAndDateUtil.parseDuration(requestedExpiration.getValue());
+            javax.xml.datatype.Duration requestedDuration = DurationAndDateUtil
+                    .parseDuration(requestedExpiration.getValue());
             javax.xml.datatype.Duration grantedDuration = requestedDuration;
             LOG.info("Granted renewal duration: " + grantedDuration.toString());
-            grantedExpires = getDatabase().findById(uuid).getExpires();       // NOW() or current Expires() ????
+            grantedExpires = getDatabase().findById(uuid)
+                    .getExpires();       // NOW() or current Expires() ????
             grantedExpires.add(grantedDuration);
             response.setValue(grantedDuration.toString());
         } else {

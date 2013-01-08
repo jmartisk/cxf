@@ -3,6 +3,7 @@ package org.apache.cxf.ws.eventing.shared.utils;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.FilterType;
 import org.apache.cxf.ws.eventing.shared.faults.EmptyFilter;
+
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.*;
@@ -24,14 +25,15 @@ public class FilteringUtil {
     }
 
     public static boolean doesConformToFilter(Element elm, FilterType filter) {
-        if((filter == null) || (filter.getContent() == null))
+        if ((filter == null) || (filter.getContent() == null)) {
             return true;
+        }
         String xPathString = (String)filter.getContent().get(0);
         try {
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
             XPathExpression xPathExpression = xPath.compile(xPathString);
-            return (Boolean) xPathExpression.evaluate(elm, XPathConstants.BOOLEAN);
+            return (Boolean)xPathExpression.evaluate(elm, XPathConstants.BOOLEAN);
         } catch (XPathExpressionException ex) {
             LOG.severe(ex.toString());
             throw new EmptyFilter();

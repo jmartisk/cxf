@@ -73,6 +73,7 @@ public abstract class SimpleEventingIntegrationTest {
      * which is located at local://SimpleSubscriptionManager.
      * You have to specify the reference parameters you obtained from the Event Source
      * when your subscription was created.
+     *
      * @return a JAX-WS client set up for managing the subscription you had created using the Event Source
      */
     public SubscriptionManagerClient createSubscriptionManagerClient(ReferenceParametersType refs) {

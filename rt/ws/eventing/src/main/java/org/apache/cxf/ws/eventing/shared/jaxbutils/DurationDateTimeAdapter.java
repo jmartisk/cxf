@@ -11,7 +11,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @since 9/11/12
  */
 @Deprecated
-public class DurationDateTimeAdapter extends XmlAdapter<String,DurationDateTime> {
+public class DurationDateTimeAdapter extends XmlAdapter<String, DurationDateTime> {
 
 
     @Override
@@ -24,7 +24,7 @@ public class DurationDateTimeAdapter extends XmlAdapter<String,DurationDateTime>
         } catch (IllegalArgumentException ex) {
             try {
                 return new DurationDateTime(factory.newDuration(v));
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 throw new UnsupportedExpirationType();
             }
         }

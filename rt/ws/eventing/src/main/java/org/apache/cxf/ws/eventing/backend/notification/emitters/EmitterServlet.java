@@ -1,6 +1,7 @@
 package org.apache.cxf.ws.eventing.backend.notification.emitters;
 
 import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -28,7 +29,8 @@ public abstract class EmitterServlet extends HttpServlet {
     public abstract NotificatorService getService();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         Element elm;
         DocumentBuilder db = null;
         try {

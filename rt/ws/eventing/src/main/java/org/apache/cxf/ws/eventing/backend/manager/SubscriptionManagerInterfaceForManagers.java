@@ -12,7 +12,9 @@ import java.util.UUID;
 public interface SubscriptionManagerInterfaceForManagers extends SubscriptionManagerInterfaceForEventSources {
 
     public void unsubscribeTicket(UUID uuid);
+
     public SubscriptionTicket findTicket(UUID uuid);
+
     public ExpirationType renew(UUID uuid, ExpirationType requestedExpiration);
 
 }

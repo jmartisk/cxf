@@ -40,7 +40,8 @@ public abstract class AbstractSubscriptionManager implements SubscriptionManager
         RenewResponse response = new RenewResponse();
         String uuid = retrieveSubscriptionUUID();
         LOG.info("received Renew message for UUID=" + uuid);
-        ExpirationType expiration = getSubscriptionManagerBackend().renew(UUID.fromString(uuid), body.getExpires());
+        ExpirationType expiration = getSubscriptionManagerBackend()
+                .renew(UUID.fromString(uuid), body.getExpires());
         response.setGrantedExpires(expiration);
         LOG.info("Extended subscription for UUID=" + uuid + " to " + expiration.getValue());
         return response;
@@ -52,7 +53,8 @@ public abstract class AbstractSubscriptionManager implements SubscriptionManager
         LOG.info("received GetStatus message for UUID=" + uuid);
         SubscriptionTicket ticket = obtainTicketFromDatabaseOrThrowFault(uuid);
         GetStatusResponse response = new GetStatusResponse();
-        response.setGrantedExpires(DurationAndDateUtil.toExpirationTypeContainingGregorianCalendar(ticket.getExpires()));
+        response.setGrantedExpires(
+                DurationAndDateUtil.toExpirationTypeContainingGregorianCalendar(ticket.getExpires()));
         return response;
     }
 
@@ -75,16 +77,20 @@ public abstract class AbstractSubscriptionManager implements SubscriptionManager
      *         obtaining this doesn't yet make sure that this subscription actually exists.
      */
     protected String retrieveSubscriptionUUID() {
-        Object uuid = (((WrappedMessageContext) context.getMessageContext()).getWrappedMessage().getContextualProperty("uuid"));
-        if(uuid==null)
+        Object uuid = (((WrappedMessageContext)context.getMessageContext()).getWrappedMessage()
+                .getContextualProperty("uuid"));
+        if (uuid == null) {
             throw new UnknownSubscription();
-        if(uuid.getClass() != String.class)
+        }
+        if (uuid.getClass() != String.class) {
             throw new Error("Susbcription ID should be a String but is " + uuid.getClass().getName());
-        return (String) uuid;
+        }
+        return (String)uuid;
     }
 
     /**
      * searches the subscription database for a subscription by the given UUID
+     *
      * @param uuid
      * @return the SubscriptionTicket, or throws UnknownSubscription fault if no such subscription exists
      */

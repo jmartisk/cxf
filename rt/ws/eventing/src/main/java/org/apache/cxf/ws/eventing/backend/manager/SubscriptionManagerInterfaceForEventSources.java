@@ -15,7 +15,9 @@ import java.util.List;
  */
 public interface SubscriptionManagerInterfaceForEventSources {
 
-    SubscriptionTicketGrantingResponse subscribe(DeliveryType delivery, EndpointReferenceType endTo, ExpirationType expires, FilterType filter, FormatType format);
+    SubscriptionTicketGrantingResponse subscribe(DeliveryType delivery, EndpointReferenceType endTo,
+                                                 ExpirationType expires, FilterType filter,
+                                                 FormatType format);
 
     /**
      * READ ONLY. Returns an unmodifiable list of the subscriptions in database.

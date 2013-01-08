@@ -3,6 +3,7 @@ package org.apache.cxf.ws.eventing.backend.notification;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
+
 import org.w3c.dom.Element;
 
 import java.net.URI;
@@ -38,20 +39,21 @@ public abstract class NotificatorService {
     /**
      * Call this method when an WS-Eventing event appears. It will pass the event to this NotificatorService,
      * which will then take care of notifying the subscribers.
+     *
      * @param eventAction
      * @param message
      * @throws IllegalStateException if this NotificatorService is not started
      */
     public void dispatch(URI eventAction, Element message) {
         LOG.info("NotificatorService received an event with payload: " + message);
-        if(service == null) {
+        if (service == null) {
             throw new IllegalStateException("NotificatorService is not started. " +
                     "Please call the start() method before passing any events to it.");
         }
-        for(SubscriptionTicket ticket : obtainSubscriptions()) {
+        for (SubscriptionTicket ticket : obtainSubscriptions()) {
             LOG.info("ticket: " + ticket.getUuid());
-            if(FilteringUtil.doesConformToFilter(message, ticket.getFilter())) {
-                if(!ticket.isExpired()) {
+            if (FilteringUtil.doesConformToFilter(message, ticket.getFilter())) {
+                if (!ticket.isExpired()) {
                     service.submit(new NotificationTask(ticket, eventAction, message));
                 } else {
                     LOG.info("Ticket expired at " + ticket.getExpires().toXMLFormat());
