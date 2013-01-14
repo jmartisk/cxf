@@ -13,8 +13,7 @@ import javax.xml.ws.WebServiceContext;
 import java.util.logging.Logger;
 
 /**
- * @author jmartisk
- * @since 8/28/12
+ * Default implementation of Event Source web service.
  */
 public abstract class AbstractEventSource implements EventSourceEndpoint {
 

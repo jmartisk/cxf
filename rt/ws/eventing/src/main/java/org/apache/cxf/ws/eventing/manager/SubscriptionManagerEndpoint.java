@@ -21,8 +21,7 @@ import javax.xml.ws.FaultAction;
 import javax.xml.ws.soap.Addressing;
 
 /**
- * @author jmartisk
- * @since 8/28/12
+ * The interface definition of a Subscription Manager web service, according to the specification.
  */
 @WebService(targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
@@ -37,6 +36,12 @@ import javax.xml.ws.soap.Addressing;
 @HandlerChain(file = "/eventing-handler-chain.xml")
 public interface SubscriptionManagerEndpoint {
 
+    /**
+     * The Renew operation of the Subscription Manager
+     * See http://www.w3.org/TR/ws-eventing/#Renew
+     * @param body JAXB class Renew representing the body of the renew request
+     * @return JAXB class RenewResponse representing the response for the requester
+     */
     @Action(
             input = EventingConstants.ACTION_RENEW,
             output = EventingConstants.ACTION_RENEW_RESPONSE/*,
@@ -52,6 +57,12 @@ public interface SubscriptionManagerEndpoint {
             Renew body
     );
 
+    /**
+     * The GetStatus operation of the Subscription Manager
+     * See http://www.w3.org/TR/ws-eventing/#GetStatus
+     * @param body JAXB class GetStatus representing the body of the GetStatus request
+     * @return JAXB class GetStatusResponse representing the response for the requester
+     */
     @Action(
             input = EventingConstants.ACTION_GET_STATUS,
             output = EventingConstants.ACTION_GET_STATUS_RESPONSE/*,
@@ -67,6 +78,12 @@ public interface SubscriptionManagerEndpoint {
             GetStatus body
     );
 
+    /**
+     * The Unsubscribe operation of the Subscription Manager
+     * See http://www.w3.org/TR/ws-eventing/#Unsubscribe
+     * @param body JAXB class Unsubscribe representing the body of the Unsubscribe request
+     * @return JAXB class UnsubscribeResponse representing the response for the requester
+     */
     @Action(
             input = EventingConstants.ACTION_UNSUBSCRIBE,
             output = EventingConstants.ACTION_UNSUBSCRIBE_RESPONSE
