@@ -25,7 +25,7 @@ import java.io.IOException;
 @WebService(targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @Addressing(enabled = true, required = true)
-//@Features(features = {"org.apache.cxf.ws.eventing.shared.faulthandling.EventingFaultHandlingFeature"})
+@Features(features = {"org.apache.cxf.ws.eventing.shared.faulthandling.EventingFaultHandlingFeature"})
 // TODO:remove? :(
 // ^ the preferred solution is with @FaultAction-s, why doesn't it work? ^ // ONLY FOR SERVER
 @InInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingInInterceptor")
