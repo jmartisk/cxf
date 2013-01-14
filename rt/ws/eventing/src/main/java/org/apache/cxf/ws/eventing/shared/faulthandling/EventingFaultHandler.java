@@ -13,11 +13,6 @@ import org.apache.cxf.ws.eventing.shared.EventingConstants;
 
 import java.util.logging.Logger;
 
-/**
- * @author jmartisk
- * @since 8/28/12
- */
-@Deprecated
 public class EventingFaultHandler extends AbstractSoapInterceptor {
 
     private static final Logger LOG = LogUtils.getLogger(EventingFaultHandler.class);
@@ -35,8 +30,5 @@ public class EventingFaultHandler extends AbstractSoapInterceptor {
         action.setValue(EventingConstants.ACTION_FAULT);
         maps.setAction(action);
         ContextUtils.storeMAPs(maps, message, true);
-
-//        LOG.info("found content formats: " + Arrays.toString(message.getContentFormats().toArray()));
-//        Exception faultCause =message.getContent(Exception.class);
     }
 }
