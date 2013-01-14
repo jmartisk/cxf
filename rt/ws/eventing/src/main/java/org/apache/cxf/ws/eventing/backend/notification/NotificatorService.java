@@ -40,8 +40,8 @@ public abstract class NotificatorService {
      * Call this method when an WS-Eventing event appears. It will pass the event to this NotificatorService,
      * which will then take care of notifying the subscribers.
      *
-     * @param eventAction
-     * @param message
+     * @param eventAction the WS-Addressing action associated with the event
+     * @param message the actual XML payload of the event
      * @throws IllegalStateException if this NotificatorService is not started
      */
     public void dispatch(URI eventAction, Element message) {

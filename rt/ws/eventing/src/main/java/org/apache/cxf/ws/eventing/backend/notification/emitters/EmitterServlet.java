@@ -19,34 +19,45 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 
 /**
- * @author jmartisk
- * @since 11/8/12
+ * An example Emitter for WS-Eventing. Emitter classes are meant to pass events
+ * to the NotificatorService, which then takes care of notifying subscribers.
+ * To use this Emitter:
+ * - extend it, implement getService appropriately to return a NotificatorService which
+ *   takes care of notifications to subscribers
+ * - use it as a usual servlet, eg. publish it on HTTP using a servlet container
+ * - invoke it with these parameters:
+ *   - 'payload' - XML string representing the event (it should be possible to parse an XML Document out of it)
+ *   - 'action'  - the WS-Addressing action corresponding to this event
  */
 public abstract class EmitterServlet extends HttpServlet {
 
     public static final String PARAM_PAYLOAD = "payload";
+    public static final String PARAM_ACTION = "action";
 
     public abstract NotificatorService getService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Element elm;
-        DocumentBuilder db = null;
+        doDispatch(req.getParameter(PARAM_ACTION), req.getParameter(PARAM_PAYLOAD));
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        doDispatch(req.getParameter(PARAM_ACTION), req.getParameter(PARAM_PAYLOAD));
+    }
+
+    private void doDispatch(String action, String payload) {
         try {
-            db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(req.getParameter(PARAM_PAYLOAD)));
+            is.setCharacterStream(new StringReader(payload));
             Document doc = db.parse(is);
-            getService().dispatch(new java.net.URI("http://awesome-action-TODO"), doc.getDocumentElement());
-        } catch (ParserConfigurationException e) {
-
-        } catch (SAXException e) {
-
-        } catch (URISyntaxException e) {
-
+            getService().dispatch(new java.net.URI(action), doc.getDocumentElement());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
     }
 
 }
