@@ -75,6 +75,47 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
                 "The subscription manager should have refused to send status of a cancelled subscription");
     }
 
+
+    /**
+     * Tests the Renew operation, while specifying an xs:dateTime in the renew request,
+     * eg. the subscriber requests to set the subscription expiration to a specific date/time.
+     */
+    @Test
+    public void renewWithDateTime() throws IOException {
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(DurationAndDateUtil
+                .convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("2018-10-21T14:52:46.826+02:00")));  // 5 minutes
+        subscribe.setExpires(exp);
+        DeliveryType delivery = new DeliveryType();
+        subscribe.setDelivery(delivery);
+        SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
+
+        SubscriptionManagerClient client = createSubscriptionManagerClient(
+                resp.getSubscriptionManager().getReferenceParameters());
+        GetStatusResponse response = client.getStatus();
+        String expirationBefore = response.getGrantedExpires().getValue();
+        System.out.println("EXPIRES before renew: " + expirationBefore);
+        Assert.assertTrue(expirationBefore.length() > 0);
+
+        Renew renewRequest = new Renew();
+        ExpirationType renewExp = new ExpirationType();
+        renewExp.setValue(DurationAndDateUtil
+                .convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("2056-10-21T14:54:46.826+02:00")));  // 10 minutes
+        renewRequest.setExpires(renewExp);
+        client.renew(renewRequest);
+        response = client.getStatus();
+        String expirationAfter = response.getGrantedExpires().getValue();
+        System.out.println("EXPIRES after renew: " + expirationAfter);
+
+        Assert.assertFalse("Renew request should change the expiration time at least a bit",
+                expirationAfter.equals(expirationBefore));
+    }
+
+    /**
+     * Tests the Renew operation, while specifying an xs:duration in the renew request,
+     * eg. the subscriber requests to prolong the subscription by a specific amount of time.
+     */
     @Test
     public void renewWithDuration() throws IOException {
         Subscribe subscribe = new Subscribe();
