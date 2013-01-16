@@ -410,7 +410,7 @@ final class InternalContextUtils {
                         ? bindingOpInfo.getOperationInfo().getInput()
                         : bindingOpInfo.getOperationInfo().getOutput();
                     String cachedAction = (String)msgInfo.getProperty(ContextUtils.ACTION);
-                    if (cachedAction == xnull) {
+                    if (cachedAction == null) {
                         action = getActionFromMessageAttributes(msgInfo);
                     } else {
                         action = cachedAction;
