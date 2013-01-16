@@ -2,7 +2,6 @@ package org.apache.cxf.ws.eventing.shared.faults;
 
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.common.logging.LogUtils;
-import org.apache.cxf.ws.addressing.impl.ActionOnFault;
 import org.apache.cxf.ws.addressing.impl.FaultAction;
 import org.apache.cxf.ws.eventing.shared.EventingConstants;
 
