@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
  * @author jmartisk
  * @since 8/28/12
  */
-public class UnusableEPR extends WSEventingException {
+public class UnusableEPR extends WSEventingFault {
 
     public UnusableEPR() {
         super("An EPR in the Subscribe request message is unusable.",

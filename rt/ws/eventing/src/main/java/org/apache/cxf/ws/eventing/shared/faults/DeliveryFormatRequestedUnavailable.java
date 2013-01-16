@@ -1,13 +1,12 @@
 package org.apache.cxf.ws.eventing.shared.faults;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebFault;
 
 /**
  * @author jmartisk
  * @since 8/28/12
  */
-public class DeliveryFormatRequestedUnavailable extends WSEventingException {
+public class DeliveryFormatRequestedUnavailable extends WSEventingFault {
 
     public DeliveryFormatRequestedUnavailable() {
         super("The requested delivery format is not supported.",

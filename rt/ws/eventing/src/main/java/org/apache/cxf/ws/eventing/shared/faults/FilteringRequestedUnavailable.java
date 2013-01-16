@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
  * @author jmartisk
  * @since 8/28/12
  */
-public class FilteringRequestedUnavailable extends WSEventingException {
+public class FilteringRequestedUnavailable extends WSEventingFault {
 
     public FilteringRequestedUnavailable() {
         super("The requested filter dialect is not supported.",

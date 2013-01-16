@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
  * @author jmartisk
  * @since 8/28/12
  */
-public class EmptyFilter extends WSEventingException {
+public class EmptyFilter extends WSEventingFault {
 
     public EmptyFilter() {
         super("The wse:Filter would result in zero notifications.",

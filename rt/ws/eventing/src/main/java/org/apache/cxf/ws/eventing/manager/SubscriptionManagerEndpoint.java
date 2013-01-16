@@ -1,5 +1,6 @@
 package org.apache.cxf.ws.eventing.manager;
 
+import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.feature.Features;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.interceptor.OutInterceptors;
@@ -65,10 +66,7 @@ public interface SubscriptionManagerEndpoint {
      */
     @Action(
             input = EventingConstants.ACTION_GET_STATUS,
-            output = EventingConstants.ACTION_GET_STATUS_RESPONSE/*,
-              fault = @FaultAction(
-                    className = SoapFault.class, value = EventingConstants.ACTION_FAULT
-            )*/
+            output = EventingConstants.ACTION_GET_STATUS_RESPONSE
     )
     public
     @WebResult(name = EventingConstants.RESPONSE_GET_STATUS)

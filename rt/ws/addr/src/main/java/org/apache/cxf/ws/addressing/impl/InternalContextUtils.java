@@ -64,7 +64,6 @@ import org.apache.cxf.ws.addressing.AddressingProperties;
 import org.apache.cxf.ws.addressing.AttributedURIType;
 import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
-import org.apache.cxf.ws.addressing.FaultAction;
 import org.apache.cxf.ws.addressing.JAXWSAConstants;
 import org.apache.cxf.ws.addressing.Names;
 import org.apache.cxf.wsdl.EndpointReferenceUtils;
@@ -371,16 +370,17 @@ final class InternalContextUtils {
             // wsa relevant faults should use the wsa-fault action value
             action = Names.WSA_DEFAULT_FAULT_ACTION;
         } else {
-            FaultAction annotation = null;
-            if (fault != null) {
-                annotation = fault.getClass().getAnnotation(FaultAction.class);
-            }
-            if ((annotation != null) && (annotation.value() != null)) {
+            ActionOnFault annotation = fault.getClass().getAnnotation(ActionOnFault.class);
+            if(annotation != null) {
                 action = annotation.value();
             } else {
-                action = getActionFromServiceModel(message, fault);
+                action = getActionFromServiceModel(message, fault); // formerly
             }
         }
+        // REVISIT: add support for @{Fault}Action annotation (generated
+        // from the wsaw:Action WSDL element). For the moment we just
+        // pick up the wsaw:Action attribute by walking the WSDL model
+        // directly 
         LOG.fine("action: " + action);
         return action != null ? ContextUtils.getAttributedURI(action) : null;
     }
@@ -411,7 +411,7 @@ final class InternalContextUtils {
                         ? bindingOpInfo.getOperationInfo().getInput()
                         : bindingOpInfo.getOperationInfo().getOutput();
                     String cachedAction = (String)msgInfo.getProperty(ContextUtils.ACTION);
-                    if (cachedAction == null) {
+                    if (cachedAction == xnull) {
                         action = getActionFromMessageAttributes(msgInfo);
                     } else {
                         action = cachedAction;

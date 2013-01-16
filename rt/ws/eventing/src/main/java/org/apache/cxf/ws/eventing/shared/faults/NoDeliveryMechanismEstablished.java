@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
  * @author jmartisk
  * @since 8/28/12
  */
-public class NoDeliveryMechanismEstablished extends WSEventingException {
+public class NoDeliveryMechanismEstablished extends WSEventingFault {
 
     public NoDeliveryMechanismEstablished() {
         super("No delivery mechanism specified.",

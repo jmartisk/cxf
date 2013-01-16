@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
  * @author jmartisk
  * @since 8/28/12
  */
-public class UnsupportedExpirationType extends WSEventingException {
+public class UnsupportedExpirationType extends WSEventingFault {
 
     public UnsupportedExpirationType() {
         super("Only expiration durations are supported.",

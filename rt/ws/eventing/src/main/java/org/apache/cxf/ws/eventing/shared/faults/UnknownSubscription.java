@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
  * @author jmartisk
  * @since 8/28/12
  */
-public class UnknownSubscription extends WSEventingException {
+public class UnknownSubscription extends WSEventingFault {
 
     public UnknownSubscription() {
         super("The subscription is not known.",

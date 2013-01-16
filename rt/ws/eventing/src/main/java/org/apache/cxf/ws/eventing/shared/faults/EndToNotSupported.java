@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
  * @author jmartisk
  * @since 8/28/12
  */
-public class EndToNotSupported extends WSEventingException {
+public class EndToNotSupported extends WSEventingFault {
 
     public EndToNotSupported() {
         super("wse:EndTo semantics is not supported.",
