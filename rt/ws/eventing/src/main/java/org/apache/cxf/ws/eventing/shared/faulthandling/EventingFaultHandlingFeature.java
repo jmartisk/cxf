@@ -6,6 +6,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.interceptor.InterceptorProvider;
 
+@Deprecated
 public class EventingFaultHandlingFeature extends AbstractFeature {
 
     private EventingFaultHandler faultHandler = new EventingFaultHandler();

@@ -27,9 +27,6 @@ import javax.xml.ws.soap.Addressing;
 @WebService(targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @Addressing(enabled = true, required = true)
-@Features(features = {"org.apache.cxf.ws.eventing.shared.faulthandling.EventingFaultHandlingFeature"})
-// TODO:remove? :(
-// ^ the preferred solution is with @FaultAction-s, why doesn't it work? ^
 @InInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingInInterceptor")
 // TODO for debugging purposes. To be removed later
 @OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor")
@@ -45,10 +42,7 @@ public interface SubscriptionManagerEndpoint {
      */
     @Action(
             input = EventingConstants.ACTION_RENEW,
-            output = EventingConstants.ACTION_RENEW_RESPONSE/*,
-              fault = @FaultAction(
-                    className = SoapFault.class, value = EventingConstants.ACTION_FAULT
-            )*/
+            output = EventingConstants.ACTION_RENEW_RESPONSE
     )
     public
     @WebResult(name = EventingConstants.RESPONSE_RENEW)
@@ -85,9 +79,6 @@ public interface SubscriptionManagerEndpoint {
     @Action(
             input = EventingConstants.ACTION_UNSUBSCRIBE,
             output = EventingConstants.ACTION_UNSUBSCRIBE_RESPONSE
-         /*   fault = @FaultAction(
-                    className = SoapFault.class, value = EventingConstants.ACTION_FAULT
-            )*/
     )
     @WebResult(name = EventingConstants.RESPONSE_UNSUBSCRIBE)
     UnsubscribeResponse unsubscribeOp(

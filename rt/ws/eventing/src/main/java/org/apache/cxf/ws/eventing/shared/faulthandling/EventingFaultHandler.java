@@ -13,6 +13,7 @@ import org.apache.cxf.ws.eventing.shared.EventingConstants;
 
 import java.util.logging.Logger;
 
+@Deprecated
 public class EventingFaultHandler extends AbstractSoapInterceptor {
 
     private static final Logger LOG = LogUtils.getLogger(EventingFaultHandler.class);

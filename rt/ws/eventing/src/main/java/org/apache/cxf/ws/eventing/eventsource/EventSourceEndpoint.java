@@ -26,8 +26,6 @@ import javax.xml.ws.soap.Addressing;
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @Addressing(enabled = true, required = true)
 //@Features(features = {"org.apache.cxf.ws.eventing.shared.faulthandling.EventingFaultHandlingFeature"})
-// TODO:remove? :(
-// ^ the preferred solution is with @FaultAction-s, why doesn't it work? ^ // ONLY FOR SERVER
 @InInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingInInterceptor")
 // TODO for debugging purposes. To be removed later
 @OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor")
@@ -43,13 +41,7 @@ public interface EventSourceEndpoint {
      */
     @Action(
             input = EventingConstants.ACTION_SUBSCRIBE,
-            output = EventingConstants.ACTION_SUBSCRIBE_RESPONSE,
-            fault = {
-                    @FaultAction(className = IOException.class,
-                            value = "http://io-exception"),
-                    @FaultAction(className = DeliveryFormatRequestedUnavailable.class,
-                            value = "http://deliveryFormatUnavailable")
-            }
+            output = EventingConstants.ACTION_SUBSCRIBE_RESPONSE
     )
     public
     @WebResult(name = EventingConstants.RESPONSE_SUBSCRIBE)
