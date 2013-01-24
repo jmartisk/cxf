@@ -1,20 +1,43 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.apache.cxf.ws.eventing.integration;
+
+import java.io.IOException;
 
 import junit.framework.Assert;
 
 import org.apache.cxf.ws.eventing.DeliveryType;
 import org.apache.cxf.ws.eventing.ExpirationType;
+import org.apache.cxf.ws.eventing.GetStatus;
 import org.apache.cxf.ws.eventing.GetStatusResponse;
 import org.apache.cxf.ws.eventing.Renew;
 import org.apache.cxf.ws.eventing.Subscribe;
 import org.apache.cxf.ws.eventing.SubscribeResponse;
+import org.apache.cxf.ws.eventing.Unsubscribe;
 import org.apache.cxf.ws.eventing.UnsubscribeResponse;
 import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
-import org.apache.cxf.ws.eventing.client.SubscriptionManagerClient;
+import org.apache.cxf.ws.eventing.manager.SubscriptionManagerEndpoint;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.junit.Test;
 
-import java.io.IOException;
+
 
 /**
  * Tests to verify that a Subscription Manager can be properly used to manage existing subscriptions.
@@ -37,9 +60,9 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         subscribe.setDelivery(delivery);
         SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
 
-        SubscriptionManagerClient client = createSubscriptionManagerClient(
+        SubscriptionManagerEndpoint client = createSubscriptionManagerClient(
                 resp.getSubscriptionManager().getReferenceParameters());
-        GetStatusResponse response = client.getStatus();
+        GetStatusResponse response = client.getStatusOp(new GetStatus());
         System.out.println("EXPIRES: " + response.getGrantedExpires().getValue());
         Assert.assertTrue("GetStatus operation should return a XMLGregorianCalendar",
                 DurationAndDateUtil.isXMLGregorianCalendar(response.getGrantedExpires().getValue()));
@@ -60,13 +83,13 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         subscribe.setDelivery(delivery);
         SubscribeResponse subscribeResponse = eventSourceClient.subscribeOp(subscribe);
 
-        SubscriptionManagerClient client = createSubscriptionManagerClient(
+        SubscriptionManagerEndpoint client = createSubscriptionManagerClient(
                 subscribeResponse.getSubscriptionManager().getReferenceParameters());
-        UnsubscribeResponse unsubscribeResponse = client.unsubscribe();
+        UnsubscribeResponse unsubscribeResponse = client.unsubscribeOp(new Unsubscribe());
         Assert.assertNotNull(unsubscribeResponse);
 
         try {
-            GetStatusResponse getStatusResponse = client.getStatus();
+            client.getStatusOp(new GetStatus());
         } catch (javax.xml.ws.soap.SOAPFaultException ex) {
             // ok
             return;
@@ -85,15 +108,16 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
         exp.setValue(DurationAndDateUtil
-                .convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("2018-10-21T14:52:46.826+02:00")));  // 5 minutes
+                .convertToXMLString(DurationAndDateUtil
+                        .parseDurationOrTimestamp("2018-10-21T14:52:46.826+02:00")));  // 5 minutes
         subscribe.setExpires(exp);
         DeliveryType delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
         SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
 
-        SubscriptionManagerClient client = createSubscriptionManagerClient(
+        SubscriptionManagerEndpoint client = createSubscriptionManagerClient(
                 resp.getSubscriptionManager().getReferenceParameters());
-        GetStatusResponse response = client.getStatus();
+        GetStatusResponse response = client.getStatusOp(new GetStatus());
         String expirationBefore = response.getGrantedExpires().getValue();
         System.out.println("EXPIRES before renew: " + expirationBefore);
         Assert.assertTrue(expirationBefore.length() > 0);
@@ -101,10 +125,11 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         Renew renewRequest = new Renew();
         ExpirationType renewExp = new ExpirationType();
         renewExp.setValue(DurationAndDateUtil
-                .convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("2056-10-21T14:54:46.826+02:00")));  // 10 minutes
+                .convertToXMLString(DurationAndDateUtil.
+                        parseDurationOrTimestamp("2056-10-21T14:54:46.826+02:00")));  // 10 minutes
         renewRequest.setExpires(renewExp);
-        client.renew(renewRequest);
-        response = client.getStatus();
+        client.renewOp(renewRequest);
+        response = client.getStatusOp(new GetStatus());
         String expirationAfter = response.getGrantedExpires().getValue();
         System.out.println("EXPIRES after renew: " + expirationAfter);
 
@@ -127,9 +152,9 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         subscribe.setDelivery(delivery);
         SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
 
-        SubscriptionManagerClient client = createSubscriptionManagerClient(
+        SubscriptionManagerEndpoint client = createSubscriptionManagerClient(
                 resp.getSubscriptionManager().getReferenceParameters());
-        GetStatusResponse response = client.getStatus();
+        GetStatusResponse response = client.getStatusOp(new GetStatus());
         String expirationBefore = response.getGrantedExpires().getValue();
         System.out.println("EXPIRES before renew: " + expirationBefore);
         Assert.assertTrue(expirationBefore.length() > 0);
@@ -139,8 +164,8 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         renewExp.setValue(DurationAndDateUtil
                 .convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT10M0S")));  // 10 minutes
         renewRequest.setExpires(renewExp);
-        client.renew(renewRequest);
-        response = client.getStatus();
+        client.renewOp(renewRequest);
+        response = client.getStatusOp(new GetStatus());
         String expirationAfter = response.getGrantedExpires().getValue();
         System.out.println("EXPIRES after renew: " + expirationAfter);
 

@@ -58,7 +58,8 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
         subscribe.setDelivery(delivery);
         SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
         Assert.assertTrue(
-                "Specification requires that EventSource return a xs:duration expirationType if a xs:duration was requested by client",
+                "Specification requires that EventSource return a xs:duration "
+                        + "expirationType if a xs:duration was requested by client",
                 DurationAndDateUtil.isDuration(resp.getGrantedExpires().getValue()));
 
         // we specify a xs:dateTime
@@ -71,7 +72,8 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
         subscribe.setDelivery(delivery);
         resp = eventSourceClient.subscribeOp(subscribe);
         Assert.assertTrue(
-                "Specification requires that EventSource return a xs:dateTime expirationType if a xs:dateTime was requested by client",
+                "Specification requires that EventSource return a "
+                        + "xs:dateTime expirationType if a xs:dateTime was requested by client",
                 DurationAndDateUtil.isXMLGregorianCalendar(resp.getGrantedExpires().getValue()));
 
         // we don't specify anything
@@ -80,7 +82,8 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
         subscribe.setDelivery(delivery);
         resp = eventSourceClient.subscribeOp(subscribe);
         Assert.assertTrue(
-                "Specification requires that EventSource return a xs:duration expirationType if no specific expirationType was requested by client",
+                "Specification requires that EventSource return a xs:duration "
+                        + "expirationType if no specific expirationType was requested by client",
                 DurationAndDateUtil.isDuration(resp.getGrantedExpires().getValue()));
     }
 
