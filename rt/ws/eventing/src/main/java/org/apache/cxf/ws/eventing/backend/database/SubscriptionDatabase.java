@@ -3,10 +3,6 @@ package org.apache.cxf.ws.eventing.backend.database;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * @author jmartisk
- * @since 9/17/12
- */
 public interface SubscriptionDatabase {
 
     public void addTicket(SubscriptionTicket ticket);

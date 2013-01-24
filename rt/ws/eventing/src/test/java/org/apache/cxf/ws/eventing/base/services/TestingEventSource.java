@@ -1,8 +1,7 @@
 package org.apache.cxf.ws.eventing.base.services;
 
 import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerInterfaceForEventSources;
-import org.apache.cxf.ws.eventing.backend.manager.aux.SingletonSubscriptionManagerContainer;
-import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
+import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.eventsource.AbstractEventSource;
 
 import javax.jws.WebService;
@@ -19,8 +18,4 @@ public class TestingEventSource extends AbstractEventSource {
         return SingletonSubscriptionManagerContainer.getInstance();
     }
 
-    @Override
-    protected String getSubscriptionManagerURL() {
-        return SimpleEventingIntegrationTest.URL_SUBSCRIPTION_MANAGER;
-    }
 }

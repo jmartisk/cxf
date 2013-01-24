@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
  * @author jmartisk
  * @since 8/28/12
  */
-public class CannotProcessFilter extends WSEventingFault {
+public class  CannotProcessFilter extends WSEventingFault {
 
     public CannotProcessFilter() {
         super("Cannot filter as requested.",

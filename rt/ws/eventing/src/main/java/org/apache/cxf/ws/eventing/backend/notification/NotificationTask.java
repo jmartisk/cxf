@@ -1,13 +1,6 @@
 package org.apache.cxf.ws.eventing.backend.notification;
 
 import org.apache.cxf.common.logging.LogUtils;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.ws.eventing.ReferenceParametersType;
-import org.apache.cxf.ws.eventing.client.EventSinkInterface;
-import org.apache.cxf.ws.eventing.shared.handlers.SubscriptionReferenceAddingHandler;
-import org.apache.cxf.ws.eventing.shared.handlers.WSAActionSettingHandler;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 
 import org.w3c.dom.Document;

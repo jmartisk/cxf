@@ -74,7 +74,7 @@ public abstract class NotificatorService {
 
     /**
      * Shuts down the NotificatorService. This method is a MUST if you are running it inside a servlet container,
-     * because it will shutdown the underlying ExecutorService. Suggested way is to call
+     * because it will shutdown the underlying ExecutorService.
      */
     public void stop() {
         service.shutdown();

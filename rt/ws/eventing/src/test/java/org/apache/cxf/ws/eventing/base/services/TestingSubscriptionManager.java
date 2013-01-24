@@ -1,7 +1,7 @@
 package org.apache.cxf.ws.eventing.base.services;
 
 import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerInterfaceForManagers;
-import org.apache.cxf.ws.eventing.backend.manager.aux.SingletonSubscriptionManagerContainer;
+import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.manager.AbstractSubscriptionManager;
 
 import javax.jws.WebService;

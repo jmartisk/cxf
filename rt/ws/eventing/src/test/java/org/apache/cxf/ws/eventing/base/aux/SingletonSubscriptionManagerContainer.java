@@ -1,7 +1,8 @@
-package org.apache.cxf.ws.eventing.backend.manager.aux;
+package org.apache.cxf.ws.eventing.base.aux;
 
 import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManager;
 import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerImpl;
+import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
 
 /**
  * @author jmartisk
@@ -13,9 +14,13 @@ public class SingletonSubscriptionManagerContainer {
 
     public static synchronized SubscriptionManager getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new SubscriptionManagerImpl();
+            INSTANCE = new SubscriptionManagerImpl(SimpleEventingIntegrationTest.URL_SUBSCRIPTION_MANAGER);
         }
         return INSTANCE;
+    }
+
+    public static synchronized void destroy() {
+        INSTANCE = null;
     }
 
 }

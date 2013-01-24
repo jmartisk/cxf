@@ -39,11 +39,16 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
     public static final String SUBSCRIPTION_ID_NAMESPACE = "http://www.example.com";
     public static final String SUBSCRIPTION_ID = "SubscriptionID";
 
+    private String url;
 
     protected SubscriptionDatabase database;
 
-    public SubscriptionManagerImpl() {
+    public SubscriptionManagerImpl(String url) {
         database = new SubscriptionDatabaseImpl();
+        this.url = url;
+    }
+
+    private SubscriptionManagerImpl() {
     }
 
     protected static final Logger LOG = LogUtils.getLogger(SubscriptionManagerImpl.class);
@@ -213,7 +218,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
     public AttributedURIType getSubscriptionManagerAddress() {
         AttributedURIType ret = new AttributedURIType();
-        ret.setValue("http://localhost:8080/test1/TestSubscriptionManager");
+        ret.setValue(url);
         return ret;
     }
 

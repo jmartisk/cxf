@@ -41,8 +41,6 @@ public abstract class AbstractEventSource implements EventSourceEndpoint {
 
     protected abstract SubscriptionManagerInterfaceForEventSources getSubscriptionManagerBackend();
 
-    protected abstract String getSubscriptionManagerURL();
-
     protected SubscribeResponse generateResponseMessageFor(SubscriptionTicketGrantingResponse dbResponse,
                                                            boolean shouldConvertToDuration) {
         SubscribeResponse ret = new SubscribeResponse();
