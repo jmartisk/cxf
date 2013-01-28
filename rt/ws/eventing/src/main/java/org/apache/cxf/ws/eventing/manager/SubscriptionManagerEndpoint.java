@@ -41,7 +41,7 @@ import org.apache.cxf.ws.eventing.shared.EventingConstants;
 @WebService(targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @Addressing(enabled = true, required = true)
-@HandlerChain(file = "/eventing-handler-chain.xml")
+@HandlerChain(file = "/subscription-reference-parsing-handler-chain.xml")
 public interface SubscriptionManagerEndpoint {
 
     /**

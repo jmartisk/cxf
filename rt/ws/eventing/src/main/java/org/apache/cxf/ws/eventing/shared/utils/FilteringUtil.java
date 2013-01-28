@@ -62,4 +62,18 @@ public final class FilteringUtil {
             throw new EmptyFilter();
         }
     }
+
+    public static boolean isValidFilter(String xPathString) {
+        if (xPathString == null) {
+            return true;
+        }
+        try {
+            XPathFactory xPathFactory = XPathFactory.newInstance();
+            XPath xPath = xPathFactory.newXPath();
+            xPath.compile(xPathString);
+            return true;
+        } catch (XPathExpressionException ex) {
+            return false;
+        }
+    }
 }

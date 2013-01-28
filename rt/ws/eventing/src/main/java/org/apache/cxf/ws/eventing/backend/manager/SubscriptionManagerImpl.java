@@ -43,6 +43,7 @@ import org.apache.cxf.ws.eventing.backend.database.SubscriptionDatabase;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionDatabaseImpl;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.shared.EventingConstants;
+import org.apache.cxf.ws.eventing.shared.faults.CannotProcessFilter;
 import org.apache.cxf.ws.eventing.shared.faults.DeliveryFormatRequestedUnavailable;
 import org.apache.cxf.ws.eventing.shared.faults.FilteringRequestedUnavailable;
 import org.apache.cxf.ws.eventing.shared.faults.NoDeliveryMechanismEstablished;
@@ -56,7 +57,7 @@ import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
  */
 public class SubscriptionManagerImpl implements SubscriptionManager {
 
-    public static final String SUBSCRIPTION_ID_NAMESPACE = "http://www.example.com";
+    public static final String SUBSCRIPTION_ID_NAMESPACE = "http://cxf.apache.org/ws-eventing";
     public static final String SUBSCRIPTION_ID = "SubscriptionID";
     protected static final Logger LOG = LogUtils.getLogger(SubscriptionManagerImpl.class);
 
@@ -120,9 +121,10 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         if (request != null) {
             // test if the requested filtering dialect is supported
             if (FilteringUtil.isFilteringDialectSupported(request.getDialect())) {
-                // TODO test if the requested filter is valid
-                for (Object o : request.getContent()) {
-                    LOG.fine("Found filter content: " + o.getClass() + " " + o.toString());
+                String filter = (String)request.getContent().get(0);
+                LOG.fine("Found filter content: " + filter);
+                if (!FilteringUtil.isValidFilter(filter)) {
+                    throw new CannotProcessFilter();
                 }
                 ticket.setFilter(request);
             } else {

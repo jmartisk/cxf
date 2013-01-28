@@ -33,6 +33,13 @@ import org.w3c.dom.Element;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerImpl;
 
+/**
+ * Subscription reference parsing handler is a SOAP handler on the Subscription Manager's side
+ * which takes care of parsing the reference parameters and retrieving the subscription
+ * ID from SOAP headers before the message is passed to the Subscription Manager itself.
+ * In handleMessage method, it is supposed to retrieve the UUID of the subscription and
+ * save it into the SOAPMessageContext as a String with the key 'uuid'
+ */
 public class SubscriptionReferenceParsingHandler implements SOAPHandler<SOAPMessageContext> {
 
     private static final Logger LOG = LogUtils.getLogger(SubscriptionReferenceParsingHandler.class);
