@@ -194,8 +194,12 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         JAXBElement idqn = new JAXBElement(new QName("http://www.example.org", "MyReferenceParameter"),
                 String.class,
                 "380");
+        JAXBElement idqn2 = new JAXBElement(new QName("http://www.example.org", "MyReferenceParameter2"),
+                String.class,
+                "381");
         eventSinkERT.setReferenceParameters(new ReferenceParametersType());
         eventSinkERT.getReferenceParameters().getAny().add(idqn);
+        eventSinkERT.getReferenceParameters().getAny().add(idqn2);
         AttributedURIType eventSinkAddr = new AttributedURIType();
         eventSinkAddr.setValue("local://EventSink3");
         eventSinkERT.setAddress(eventSinkAddr);

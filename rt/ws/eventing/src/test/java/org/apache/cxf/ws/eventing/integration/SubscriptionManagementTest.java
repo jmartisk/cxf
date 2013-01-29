@@ -34,6 +34,7 @@ import org.apache.cxf.ws.eventing.Unsubscribe;
 import org.apache.cxf.ws.eventing.UnsubscribeResponse;
 import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
 import org.apache.cxf.ws.eventing.manager.SubscriptionManagerEndpoint;
+import org.apache.cxf.ws.eventing.shared.faults.UnknownSubscription;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.junit.Test;
 
@@ -91,7 +92,8 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         try {
             client.getStatusOp(new GetStatus());
         } catch (javax.xml.ws.soap.SOAPFaultException ex) {
-            // ok
+            Assert.assertTrue(ex.getFault().getFaultCode().contains(UnknownSubscription.LOCAL_PART));
+            Assert.assertTrue(ex.getFault().getTextContent().contains(UnknownSubscription.REASON));
             return;
         }
         Assert.fail(
