@@ -45,6 +45,8 @@ import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer
 import org.apache.cxf.ws.eventing.integration.eventsink.TestingEventSinkImpl;
 import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSink;
 import org.apache.cxf.ws.eventing.integration.notificationapi.FireEvent;
+import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.ReferenceParametersAssertingHandler;
+import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.WSAActionAssertingHandler;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.junit.Test;
 
@@ -65,16 +67,32 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         };
     }
 
-    private Server createEventSink() {
+    private Server createEventSink(String address) {
         JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
         factory.setServiceBean(new TestingEventSinkImpl());
-        factory.setAddress("local://EventSink");
+        factory.setAddress(address);
+        return factory.create();
+    }
+
+    private Server createEventSinkWithWSAActionAssertion(String address, String action) {
+        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
+        factory.setServiceBean(new TestingEventSinkImpl());
+        factory.setAddress(address);
+        factory.getHandlers().add(new WSAActionAssertingHandler(action));
+        return factory.create();
+    }
+
+    private Server createEventSinkWithReferenceParametersAssertion(String address, ReferenceParametersType params) {
+        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
+        factory.setServiceBean(new TestingEventSinkImpl());
+        factory.setAddress(address);
+        factory.getHandlers().add(new ReferenceParametersAssertingHandler(params));
         return factory.create();
     }
 
 
     @Test
-    public void doit() throws IOException {
+    public void basicReceptionOfEvents() throws IOException {
         NotificatorService service = createService();
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
@@ -82,33 +100,29 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
                 DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT0S")));
         subscribe.setExpires(exp);
 
-        EndpointReferenceType eventSink = new EndpointReferenceType();
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
 
-        JAXBElement idqn = new JAXBElement(new QName("http://www.example.org", "MyReferenceParameter"),
-                String.class,
-                "380");
-        eventSink.setReferenceParameters(new ReferenceParametersType());
-        eventSink.getReferenceParameters().getAny().add(idqn);
         AttributedURIType eventSinkAddr = new AttributedURIType();
         eventSinkAddr.setValue("local://EventSink");
-        eventSink.setAddress(eventSinkAddr);
+        eventSinkERT.setAddress(eventSinkAddr);
         subscribe.setDelivery(new DeliveryType());
         subscribe.getDelivery().getContent().add(new NotifyTo());
-        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSink);
+        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
 
 
         eventSourceClient.subscribeOp(subscribe);
         eventSourceClient.subscribeOp(subscribe);
         eventSourceClient.subscribeOp(subscribe);
 
-        Server eventSinkServer = createEventSink();
+        Server eventSinkServer = createEventSink("local://EventSink");
+        TestingEventSinkImpl.RECEIVED_FIRES.set(0);
 
         service.start();
         Emitter emitter = new EmitterImpl(service);
-        emitter.dispatch(new FireEvent());
+        emitter.dispatch(new FireEvent("Canada", 8));
         for (int i = 0; i < 10; i++) {
             if (TestingEventSinkImpl.RECEIVED_FIRES.get() == 3) {
-                return;
+                break;
             }
             try {
                 Thread.sleep(1000);
@@ -116,10 +130,103 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
                 ex.printStackTrace();
             }
         }
-        Assert.fail("TestingEventSinkImpl should have received 3 events but received "
-                + TestingEventSinkImpl.RECEIVED_FIRES.get());
         eventSinkServer.stop();
-        eventSinkServer.destroy();
+        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 3) {
+            Assert.fail("TestingEventSinkImpl should have received 3 events but received "
+                + TestingEventSinkImpl.RECEIVED_FIRES.get());
+        }
     }
 
+    @Test
+    public void withWSAAction() throws Exception {
+        NotificatorService service = createService();
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(
+                DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT0S")));
+        subscribe.setExpires(exp);
+
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
+
+        AttributedURIType eventSinkAddr = new AttributedURIType();
+        eventSinkAddr.setValue("local://EventSink2");
+        eventSinkERT.setAddress(eventSinkAddr);
+        subscribe.setDelivery(new DeliveryType());
+        subscribe.getDelivery().getContent().add(new NotifyTo());
+        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
+
+
+        eventSourceClient.subscribeOp(subscribe);
+
+        Server eventSinkServer = createEventSinkWithWSAActionAssertion("local://EventSink2", "http://www.fire.com");
+        TestingEventSinkImpl.RECEIVED_FIRES.set(0);
+        service.start();
+        Emitter emitter = new EmitterImpl(service);
+        emitter.dispatch(new FireEvent("Canada", 8));
+        for (int i = 0; i < 10; i++) {
+            if (TestingEventSinkImpl.RECEIVED_FIRES.get() == 1) {
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        eventSinkServer.stop();
+        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 1) {
+            Assert.fail("TestingEventSinkImpl should have received 1 events but received "
+                    + TestingEventSinkImpl.RECEIVED_FIRES.get());
+        }
+    }
+
+    @Test
+    public void withReferenceParameters() throws Exception {
+        NotificatorService service = createService();
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(
+                DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT0S")));
+        subscribe.setExpires(exp);
+
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
+
+        JAXBElement idqn = new JAXBElement(new QName("http://www.example.org", "MyReferenceParameter"),
+                String.class,
+                "380");
+        eventSinkERT.setReferenceParameters(new ReferenceParametersType());
+        eventSinkERT.getReferenceParameters().getAny().add(idqn);
+        AttributedURIType eventSinkAddr = new AttributedURIType();
+        eventSinkAddr.setValue("local://EventSink3");
+        eventSinkERT.setAddress(eventSinkAddr);
+        subscribe.setDelivery(new DeliveryType());
+        subscribe.getDelivery().getContent().add(new NotifyTo());
+        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
+
+
+        eventSourceClient.subscribeOp(subscribe);
+
+        Server eventSinkServer = createEventSinkWithReferenceParametersAssertion("local://EventSink3",
+                eventSinkERT.getReferenceParameters());
+        TestingEventSinkImpl.RECEIVED_FIRES.set(0);
+        service.start();
+        Emitter emitter = new EmitterImpl(service);
+        emitter.dispatch(new FireEvent("Canada", 8));
+        for (int i = 0; i < 10; i++) {
+            if (TestingEventSinkImpl.RECEIVED_FIRES.get() == 1) {
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        eventSinkServer.stop();
+        int received = TestingEventSinkImpl.RECEIVED_FIRES.get();
+        if (received != 1) {
+            Assert.fail("TestingEventSinkImpl should have received 1 events but received "
+                    + received);
+        }
+    }
 }

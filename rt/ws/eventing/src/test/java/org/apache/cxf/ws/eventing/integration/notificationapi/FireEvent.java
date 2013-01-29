@@ -21,4 +21,39 @@ package org.apache.cxf.ws.eventing.integration.notificationapi;
 
 public class FireEvent {
 
+    private String location;
+    private int severity;
+
+
+    public FireEvent() {
+    }
+
+    public FireEvent(String location, int severity) {
+        this.location = location;
+        this.severity = severity;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public int getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(int severity) {
+        this.severity = severity;
+    }
+
+    @Override
+    public String toString() {
+        return "FireEvent{"
+                + "location='" + location + '\''
+                + ", severity=" + severity
+                + '}';
+    }
 }

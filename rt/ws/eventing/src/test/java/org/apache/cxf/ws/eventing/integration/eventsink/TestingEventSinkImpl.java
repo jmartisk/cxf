@@ -37,15 +37,15 @@ public class TestingEventSinkImpl implements CatastrophicEventSink {
 
     @Override
     public void earthquake(EarthquakeEvent ev) {
-        LOG.info("Event sink received an EarthquakeEvent: " + ev.toString());
-        System.out.println("EARTHQUAKE!");
+        LOG.info("Event sink received an event: " + ev.toString());
+        System.out.println("Event sink received: " + ev.toString());
         RECEIVED_EARTHQUAKES.incrementAndGet();
     }
 
     @Override
     public void fire(FireEvent ev) {
-        LOG.info("Event sink received an FireEvent: " + ev.toString());
-        System.out.println("FIRE!");
+        LOG.info("Event sink received an event: " + ev.toString());
+        System.out.println("Event sink received: " + ev.toString());
         RECEIVED_FIRES.incrementAndGet();
     }
 }

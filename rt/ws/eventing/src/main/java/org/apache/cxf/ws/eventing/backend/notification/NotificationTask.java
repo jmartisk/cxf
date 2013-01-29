@@ -73,13 +73,14 @@ class NotificationTask implements Runnable {
                     ReferenceParametersAddingHandler(
                     target.getNotificationReferenceParams());
             // register filtering interceptors TODO
-            // register reference parameters adding interceptor TODO
+
+            // TODO wrapped delivery
 
             JaxWsProxyFactoryBean service = new JaxWsProxyFactoryBean();
             service.getOutInterceptors().add(new LoggingOutInterceptor());
             service.setServiceClass(endpointInterface);
             service.setAddress(target.getTargetURL());
-            service.setTransportId(LocalTransportFactory.TRANSPORT_ID);
+            service.setTransportId(LocalTransportFactory.TRANSPORT_ID); // TODO generalize
             service.getHandlers().add(handler);
             Object endpoint = service.create();
             LOG.info("client CREATED");
@@ -90,13 +91,11 @@ class NotificationTask implements Runnable {
             for (Method i : methods) {
                 if (Arrays.equals(i.getParameterTypes(), new Class<?>[] {event.getClass()})) {
                     method = i;
-                    System.out.println("METHOD FOUND");
                 }
             }
 
             if (method != null) {
                 try {
-                    System.out.println("INVOKING");
                     method.invoke(endpoint, event);
                 } catch (Exception e) {
                     e.printStackTrace();

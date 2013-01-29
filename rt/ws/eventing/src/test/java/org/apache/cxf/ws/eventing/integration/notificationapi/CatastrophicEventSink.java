@@ -19,6 +19,7 @@
 
 package org.apache.cxf.ws.eventing.integration.notificationapi;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.Action;
 import javax.xml.ws.soap.Addressing;
@@ -28,9 +29,9 @@ import javax.xml.ws.soap.Addressing;
 public interface CatastrophicEventSink {
 
     @Action(input = "http://www.earthquake.com")
-    void earthquake(EarthquakeEvent ev);
+    void earthquake(@WebParam(name = "earthquake") EarthquakeEvent ev);
 
     @Action(input = "http://www.fire.com")
-    void fire(FireEvent ev);
+    void fire(@WebParam(name = "fire") FireEvent ev);
 
 }

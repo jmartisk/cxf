@@ -44,6 +44,7 @@ import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
  *   - 'payload' - XML string representing the event (it should be possible to parse an XML Document out of it)
  *   - 'action'  - the WS-Addressing action corresponding to this event
  */
+@Deprecated
 public abstract class EmitterServlet extends HttpServlet {
 
     public static final String PARAM_PAYLOAD = "payload";

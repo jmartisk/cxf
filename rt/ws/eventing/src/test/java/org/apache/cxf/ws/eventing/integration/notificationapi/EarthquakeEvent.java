@@ -21,4 +21,39 @@ package org.apache.cxf.ws.eventing.integration.notificationapi;
 
 public class EarthquakeEvent {
 
+    private String location;
+    private float richterScale;
+
+    public EarthquakeEvent() {
+
+    }
+
+    public EarthquakeEvent(float richterScale, String location) {
+        this.richterScale = richterScale;
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public float getRichterScale() {
+        return richterScale;
+    }
+
+    public void setRichterScale(float richterScale) {
+        this.richterScale = richterScale;
+    }
+
+    @Override
+    public String toString() {
+        return "EarthquakeEvent{"
+                + "location='" + location + '\''
+                + ", richterScale=" + richterScale
+                + '}';
+    }
 }
