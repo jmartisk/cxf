@@ -19,11 +19,16 @@
 
 package org.apache.cxf.ws.eventing.integration.notificationapi.assertions;
 
+import java.util.Iterator;
 import java.util.Set;
+import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+
+import org.w3c.dom.Element;
 
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
 
@@ -42,9 +47,36 @@ public class ReferenceParametersAssertingHandler implements SOAPHandler<SOAPMess
 
     @Override
     public boolean handleMessage(SOAPMessageContext context) {
-        System.out.println("handleMessage from REFPARAM");
-        params.getAny();
-        return true; // TODO
+        if ((Boolean)context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) {
+            return true;
+        }
+        if (params == null) {
+            return true;
+        }
+        try {
+            // every element in the ReferenceParametersType should be present somewhere in the headers
+            for (Object exp : params.getAny()) {
+                JAXBElement expectedElement = (JAXBElement)exp;
+                boolean found = false;
+                Iterator i = context.getMessage().getSOAPHeader().examineAllHeaderElements();
+                while (i.hasNext()) {
+                    Element actualHeaderelement = (Element)i.next();
+                    if (expectedElement.getName().getLocalPart().equals(actualHeaderelement.getLocalName())
+                            && expectedElement.getName().getNamespaceURI()
+                            .equals(actualHeaderelement.getNamespaceURI())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    throw new RuntimeException("Event sink should have received Reference parameter: "
+                        + expectedElement.getName());
+                }
+            }
+        } catch (SOAPException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 
     @Override
