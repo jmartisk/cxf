@@ -31,11 +31,11 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import org.w3c.dom.Element;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
 
-public class SubscriptionReferenceAddingHandler implements SOAPHandler<SOAPMessageContext> {
+public class ReferenceParametersAddingHandler implements SOAPHandler<SOAPMessageContext> {
 
     private final ReferenceParametersType params;
 
-    public SubscriptionReferenceAddingHandler(ReferenceParametersType parametersType) {
+    public ReferenceParametersAddingHandler(ReferenceParametersType parametersType) {
         this.params = parametersType;
     }
 
@@ -49,6 +49,9 @@ public class SubscriptionReferenceAddingHandler implements SOAPHandler<SOAPMessa
     public boolean handleMessage(SOAPMessageContext context) {
         // we are interested only in outbound messages here
         if (!(Boolean)context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) {
+            return true;
+        }
+        if (params == null) {
             return true;
         }
         try {

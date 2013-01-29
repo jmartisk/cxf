@@ -17,32 +17,10 @@
  * under the License.
  */
 
-package org.apache.cxf.ws.eventing.client;
+package org.apache.cxf.ws.eventing.backend.notification.emitters;
 
+public interface Emitter {
 
-import javax.jws.Oneway;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.Action;
-import javax.xml.ws.soap.Addressing;
-
-import org.apache.cxf.ws.eventing.SubscriptionEnd;
-import org.apache.cxf.ws.eventing.shared.EventingConstants;
-
-@WebService
-@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@Addressing(enabled = true, required = true)
-public interface EventSinkInterface {
-
-    @Oneway                              // TODO: JAXBElement
-    void notification(@WebParam Object notification);
-
-    @Oneway
-    @Action(
-            input = EventingConstants.ACTION_SUBSCRIPTION_END
-    )
-    void subscriptionEnd(@WebParam SubscriptionEnd subscriptionEnd);
-
+    void dispatch(Object event);
 
 }

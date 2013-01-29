@@ -33,8 +33,6 @@ import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
 
 
-
-
 /**
  * The service which takes care of notifying subscribers about events. Has access to the subscription database.
  * Receives events from compliant Emitters, eg. EmitterServlet / EmitterMBean,..
@@ -50,6 +48,7 @@ public abstract class NotificatorService {
     private ExecutorService service;
 
     public NotificatorService() {
+
     }
 
     /**
@@ -59,14 +58,17 @@ public abstract class NotificatorService {
      */
     protected abstract List<SubscriptionTicket> obtainSubscriptions();
 
+    protected abstract Class getEventSinkInterface();
+
     /**
      * Call this method when an WS-Eventing event appears. It will pass the event to this NotificatorService,
      * which will then take care of notifying the subscribers.
      *
      * @param eventAction the WS-Addressing action associated with the event
-     * @param message the actual XML payload of the event
+     * @param message     the actual XML payload of the event
      * @throws IllegalStateException if this NotificatorService is not started
      */
+    @Deprecated
     public void dispatch(URI eventAction, Element message) {
         LOG.info("NotificatorService received an event with payload: " + message);
         if (service == null) {
@@ -83,6 +85,21 @@ public abstract class NotificatorService {
                 }
             } else {
                 LOG.info("Filter " + ticket.getFilter() + " doesn't apply to this message.");
+            }
+        }
+    }
+
+    public void dispatch(Object event) {
+        LOG.info("NotificatorService received an event: " + event);
+        if (service == null) {
+            throw new IllegalStateException("NotificatorService is not started. "
+                    + "Please call the start() method before passing any events to it.");
+        }
+        for (SubscriptionTicket ticket : obtainSubscriptions()) {
+            if (!ticket.isExpired()) {
+                service.submit(new NotificationTask(ticket, event, getEventSinkInterface()));
+            } else {
+                LOG.info("Ticket expired at " + ticket.getExpires().toXMLFormat());
             }
         }
     }

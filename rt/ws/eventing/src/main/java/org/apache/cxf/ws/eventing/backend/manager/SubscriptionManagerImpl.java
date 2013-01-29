@@ -172,6 +172,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         if (request == null) {
             throw new NoDeliveryMechanismEstablished();
         }
+        // TODO more checks (warning-this will break existing tests!!!)
         ticket.setDelivery(request);
     }
 

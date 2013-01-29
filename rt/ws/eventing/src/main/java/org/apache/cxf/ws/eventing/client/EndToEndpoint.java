@@ -17,7 +17,22 @@
  * under the License.
  */
 
-package org.apache.cxf.ws.eventing.backend.notification.emitters;
+package org.apache.cxf.ws.eventing.client;
 
-public class EmitterMBean {
+
+import javax.jws.Oneway;
+import javax.jws.WebParam;
+import javax.xml.ws.Action;
+
+import org.apache.cxf.ws.eventing.SubscriptionEnd;
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
+
+public interface EndToEndpoint {
+
+    @Oneway
+    @Action(
+            input = EventingConstants.ACTION_SUBSCRIPTION_END
+    )
+    void subscriptionEnd(@WebParam SubscriptionEnd subscriptionEnd);
+
 }

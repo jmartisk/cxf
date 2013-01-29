@@ -30,7 +30,7 @@ import org.apache.cxf.ws.eventing.base.services.TestingEventSource;
 import org.apache.cxf.ws.eventing.base.services.TestingSubscriptionManager;
 import org.apache.cxf.ws.eventing.eventsource.EventSourceEndpoint;
 import org.apache.cxf.ws.eventing.manager.SubscriptionManagerEndpoint;
-import org.apache.cxf.ws.eventing.shared.handlers.SubscriptionReferenceAddingHandler;
+import org.apache.cxf.ws.eventing.shared.handlers.ReferenceParametersAddingHandler;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -103,7 +103,7 @@ public abstract class SimpleEventingIntegrationTest {
         factory.setAddress(URL_SUBSCRIPTION_MANAGER);
         factory.getInInterceptors().add(new LoggingInInterceptor());
         factory.getOutInterceptors().add(new LoggingOutInterceptor());
-        SubscriptionReferenceAddingHandler handler = new SubscriptionReferenceAddingHandler(refs);
+        ReferenceParametersAddingHandler handler = new ReferenceParametersAddingHandler(refs);
         factory.getHandlers().add(handler);
         return (SubscriptionManagerEndpoint)factory.create();
     }

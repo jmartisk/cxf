@@ -17,21 +17,20 @@
  * under the License.
  */
 
-package org.apache.cxf.ws.eventing.base.services;
+package org.apache.cxf.ws.eventing.backend.notification.emitters;
 
-import org.apache.cxf.ws.eventing.SubscriptionEnd;
-import org.apache.cxf.ws.eventing.client.EventSinkInterface;
+import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
 
-public class TestingEventSink implements EventSinkInterface {
+public class EmitterImpl implements Emitter {
 
-    @Override
-    public void notification(Object notification) {
-        System.out.println(notification);
+    private final NotificatorService service;
+
+    public EmitterImpl(NotificatorService service) {
+        this.service = service;
     }
 
     @Override
-    public void subscriptionEnd(SubscriptionEnd subscriptionEnd) {
-
+    public void dispatch(Object event) {
+        service.dispatch(event);
     }
-
 }
