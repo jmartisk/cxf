@@ -21,12 +21,17 @@ package org.apache.cxf.ws.eventing.shared.faults;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
+
 public class NoDeliveryMechanismEstablished extends WSEventingFault {
 
+    public static final String REASON = "No delivery mechanism specified.";
+    public static final String LOCAL_PART = "NoDeliveryMechanismEstablished";
+
     public NoDeliveryMechanismEstablished() {
-        super("No delivery mechanism specified.",
+        super(REASON,
                 null,
-                new QName("http://www.w3.org/2011/03/ws-evt", "NoDeliveryMechanismEstablished"));
+                new QName(EventingConstants.EVENTING_2011_03_NAMESPACE, LOCAL_PART));
     }
 
 }

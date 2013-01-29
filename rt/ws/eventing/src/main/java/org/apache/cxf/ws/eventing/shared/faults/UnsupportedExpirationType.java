@@ -21,12 +21,17 @@ package org.apache.cxf.ws.eventing.shared.faults;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
+
 public class UnsupportedExpirationType extends WSEventingFault {
 
+    public static final String REASON = "Only expiration durations are supported.";
+    public static final String LOCAL_PART = "UnsupportedExpirationType";
+
     public UnsupportedExpirationType() {
-        super("Only expiration durations are supported.",
+        super(REASON,
                 null,
-                new QName("http://www.w3.org/2011/03/ws-evt", "UnsupportedExpirationType"));
+                new QName(EventingConstants.EVENTING_2011_03_NAMESPACE, LOCAL_PART));
     }
 
 }

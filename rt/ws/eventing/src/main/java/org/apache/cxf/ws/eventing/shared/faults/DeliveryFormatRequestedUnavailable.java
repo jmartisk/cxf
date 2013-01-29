@@ -21,12 +21,17 @@ package org.apache.cxf.ws.eventing.shared.faults;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
+
 public class DeliveryFormatRequestedUnavailable extends WSEventingFault {
 
+    public static final String REASON = "The requested delivery format is not supported.";
+    public static final String LOCAL_PART = "DeliveryFormatRequestedUnavailable";
+
     public DeliveryFormatRequestedUnavailable() {
-        super("The requested delivery format is not supported.",
+        super(REASON,
                 null,
-                new QName("http://www.w3.org/2011/03/ws-evt", "DeliveryFormatRequestedUnavailable"));
+                new QName(EventingConstants.EVENTING_2011_03_NAMESPACE, LOCAL_PART));
     }
 
 }

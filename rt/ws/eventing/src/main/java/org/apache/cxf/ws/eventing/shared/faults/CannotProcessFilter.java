@@ -21,12 +21,17 @@ package org.apache.cxf.ws.eventing.shared.faults;
 
 import javax.xml.namespace.QName;
 
-public class  CannotProcessFilter extends WSEventingFault {
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
+
+public class CannotProcessFilter extends WSEventingFault {
+
+    public static final String REASON = "Cannot filter as requested.";
+    public static final String LOCAL_PART = "CannotProcessFilter";
 
     public CannotProcessFilter() {
-        super("Cannot filter as requested.",
+        super(REASON,
                 null,
-                new QName("http://www.w3.org/2011/03/ws-evt", "CannotProcessFilter"));
+                new QName(EventingConstants.EVENTING_2011_03_NAMESPACE, LOCAL_PART));
     }
 
 }
