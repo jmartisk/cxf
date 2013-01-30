@@ -36,9 +36,9 @@ import org.apache.cxf.ws.eventing.shared.handlers.ReferenceParametersAddingHandl
 /**
  * Represents the task to send a notification about a particular event to a particular subscribed client.
  */
-class NotificationTask implements Runnable {
+class EventNotificationTask implements Runnable {
 
-    protected static final Logger LOG = LogUtils.getLogger(NotificationTask.class);
+    protected static final Logger LOG = LogUtils.getLogger(EventNotificationTask.class);
 
     SubscriptionTicket target;
     URI action;
@@ -47,13 +47,13 @@ class NotificationTask implements Runnable {
     Class endpointInterface;
 
     @Deprecated
-    NotificationTask(SubscriptionTicket subscription, URI eventAction, Element message) {
+    EventNotificationTask(SubscriptionTicket subscription, URI eventAction, Element message) {
         this.target = subscription;
         this.action = eventAction;
         this.message = message;
     }
 
-    public NotificationTask(SubscriptionTicket ticket, Object event, Class endpointInterface) {
+    public EventNotificationTask(SubscriptionTicket ticket, Object event, Class endpointInterface) {
         this.target = ticket;
         this.event = event;
         this.endpointInterface = endpointInterface;

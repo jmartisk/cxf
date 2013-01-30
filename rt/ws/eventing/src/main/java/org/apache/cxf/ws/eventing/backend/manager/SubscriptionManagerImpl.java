@@ -38,6 +38,7 @@ import org.apache.cxf.ws.eventing.EndpointReferenceType;
 import org.apache.cxf.ws.eventing.ExpirationType;
 import org.apache.cxf.ws.eventing.FilterType;
 import org.apache.cxf.ws.eventing.FormatType;
+import org.apache.cxf.ws.eventing.NotifyTo;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionDatabase;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionDatabaseImpl;
@@ -49,6 +50,7 @@ import org.apache.cxf.ws.eventing.shared.faults.FilteringRequestedUnavailable;
 import org.apache.cxf.ws.eventing.shared.faults.NoDeliveryMechanismEstablished;
 import org.apache.cxf.ws.eventing.shared.faults.UnknownSubscription;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
+import org.apache.cxf.ws.eventing.shared.utils.EPRInspectionTool;
 import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
 
 /**
@@ -169,10 +171,17 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
     protected void processDelivery(DeliveryType request, SubscriptionTicket ticket,
                                    SubscriptionTicketGrantingResponse response) {
-        if (request == null) {
+        // check if there is any usable EPR in the Delivery part
+        try {
+            NotifyTo notifyTo = (NotifyTo)request.getContent().get(0);
+            if (!EPRInspectionTool.containsUsableEPR(notifyTo.getValue())) {
+                throw new NoDeliveryMechanismEstablished();
+            }
+        } catch (NullPointerException npe) {
+            throw new NoDeliveryMechanismEstablished();
+        } catch (IndexOutOfBoundsException ioobe) {
             throw new NoDeliveryMechanismEstablished();
         }
-        // TODO more checks (warning-this will break existing tests!!!)
         ticket.setDelivery(request);
     }
 

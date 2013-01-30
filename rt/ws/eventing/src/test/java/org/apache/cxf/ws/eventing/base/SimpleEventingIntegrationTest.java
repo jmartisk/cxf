@@ -25,6 +25,9 @@ import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.local.LocalTransportFactory;
+import org.apache.cxf.ws.eventing.AttributedURIType;
+import org.apache.cxf.ws.eventing.EndpointReferenceType;
+import org.apache.cxf.ws.eventing.NotifyTo;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
 import org.apache.cxf.ws.eventing.base.services.TestingEventSource;
 import org.apache.cxf.ws.eventing.base.services.TestingSubscriptionManager;
@@ -106,6 +109,16 @@ public abstract class SimpleEventingIntegrationTest {
         ReferenceParametersAddingHandler handler = new ReferenceParametersAddingHandler(refs);
         factory.getHandlers().add(handler);
         return (SubscriptionManagerEndpoint)factory.create();
+    }
+
+    protected NotifyTo createDummyNotifyTo() {
+        NotifyTo ret = new NotifyTo();
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
+        AttributedURIType eventSinkAddr = new AttributedURIType();
+        eventSinkAddr.setValue("local://dummy-sink");
+        eventSinkERT.setAddress(eventSinkAddr);
+        ret.setValue(eventSinkERT);
+        return ret;
     }
 
 }

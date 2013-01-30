@@ -59,6 +59,7 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         subscribe.setExpires(exp);
         DeliveryType delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
         SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
 
         SubscriptionManagerEndpoint client = createSubscriptionManagerClient(
@@ -82,6 +83,7 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         subscribe.setExpires(exp);
         DeliveryType delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
         SubscribeResponse subscribeResponse = eventSourceClient.subscribeOp(subscribe);
 
         SubscriptionManagerEndpoint client = createSubscriptionManagerClient(
@@ -115,6 +117,7 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         subscribe.setExpires(exp);
         DeliveryType delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
         SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
 
         SubscriptionManagerEndpoint client = createSubscriptionManagerClient(
@@ -152,6 +155,7 @@ public class SubscriptionManagementTest extends SimpleEventingIntegrationTest {
         subscribe.setExpires(exp);
         DeliveryType delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
         SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
 
         SubscriptionManagerEndpoint client = createSubscriptionManagerClient(

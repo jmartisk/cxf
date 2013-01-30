@@ -79,7 +79,7 @@ public abstract class NotificatorService {
             LOG.info("ticket: " + ticket.getUuid());
             if (FilteringUtil.doesConformToFilter(message, ticket.getFilter())) {
                 if (!ticket.isExpired()) {
-                    service.submit(new NotificationTask(ticket, eventAction, message));
+                    service.submit(new EventNotificationTask(ticket, eventAction, message));
                 } else {
                     LOG.info("Ticket expired at " + ticket.getExpires().toXMLFormat());
                 }
@@ -97,7 +97,7 @@ public abstract class NotificatorService {
         }
         for (SubscriptionTicket ticket : obtainSubscriptions()) {
             if (!ticket.isExpired()) {
-                service.submit(new NotificationTask(ticket, event, getEventSinkInterface()));
+                service.submit(new EventNotificationTask(ticket, event, getEventSinkInterface()));
             } else {
                 LOG.info("Ticket expired at " + ticket.getExpires().toXMLFormat());
             }

@@ -20,6 +20,8 @@
 package org.apache.cxf.ws.eventing.integration;
 
 import java.io.IOException;
+import javax.xml.ws.soap.SOAPFaultException;
+
 import junit.framework.Assert;
 
 import org.apache.cxf.ws.eventing.DeliveryType;
@@ -27,14 +29,10 @@ import org.apache.cxf.ws.eventing.ExpirationType;
 import org.apache.cxf.ws.eventing.Subscribe;
 import org.apache.cxf.ws.eventing.SubscribeResponse;
 import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
+import org.apache.cxf.ws.eventing.shared.faults.NoDeliveryMechanismEstablished;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.junit.Test;
 
-
-
-/**
- *
- */
 public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
 
     /**
@@ -56,6 +54,9 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
         subscribe.setExpires(exp);
         DeliveryType delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
+
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
+
         SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
         Assert.assertTrue(
                 "Specification requires that EventSource return a xs:duration "
@@ -70,6 +71,7 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
         subscribe.setExpires(exp);
         delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
         resp = eventSourceClient.subscribeOp(subscribe);
         Assert.assertTrue(
                 "Specification requires that EventSource return a "
@@ -80,11 +82,30 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
         subscribe = new Subscribe();
         delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
         resp = eventSourceClient.subscribeOp(subscribe);
         Assert.assertTrue(
                 "Specification requires that EventSource return a xs:duration "
                         + "expirationType if no specific expirationType was requested by client",
                 DurationAndDateUtil.isDuration(resp.getGrantedExpires().getValue()));
+    }
+
+    @Test
+    public void noDeliveryMechanismSpecified() throws IOException {
+        // we specify a xs:duration
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(
+                DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT0S")));
+        subscribe.setExpires(exp);
+        try {
+            eventSourceClient.subscribeOp(subscribe);
+        } catch (SOAPFaultException ex) {
+            Assert.assertTrue(ex.getFault().getFaultCode().contains(NoDeliveryMechanismEstablished.LOCAL_PART));
+            Assert.assertTrue(ex.getFault().getTextContent().contains(NoDeliveryMechanismEstablished.REASON));
+            return;
+        }
+        Assert.fail("Event source should have sent a NoDeliveryMechanismEstablished fault");
     }
 
 }
