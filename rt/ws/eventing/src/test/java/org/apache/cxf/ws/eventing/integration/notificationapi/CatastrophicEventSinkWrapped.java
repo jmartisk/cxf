@@ -30,14 +30,15 @@ import org.apache.cxf.ws.eventing.shared.EventingConstants;
 
 @WebService
 @Addressing(enabled = true, required = true)
-@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-public interface CatastrophicEventSink {
+@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
+public interface CatastrophicEventSinkWrapped {
 
     @Action(input = "http://www.earthquake.com")
+    @RequestWrapper(localName = "NotifyEvent", targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
     void earthquake(@WebParam(name = "earthquake") EarthquakeEvent ev);
 
     @Action(input = "http://www.fire.com")
-    @RequestWrapper(localName = "NotifyEvent", targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
+    @RequestWrapper(localName = "NotifyEvent2", targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
     void fire(@WebParam(name = "fire") FireEvent ev);
 
 }

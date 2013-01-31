@@ -33,6 +33,7 @@ import org.apache.cxf.ws.eventing.AttributedURIType;
 import org.apache.cxf.ws.eventing.DeliveryType;
 import org.apache.cxf.ws.eventing.EndpointReferenceType;
 import org.apache.cxf.ws.eventing.ExpirationType;
+import org.apache.cxf.ws.eventing.FormatType;
 import org.apache.cxf.ws.eventing.NotifyTo;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
 import org.apache.cxf.ws.eventing.Subscribe;
@@ -44,10 +45,12 @@ import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
 import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.integration.eventsink.TestingEventSinkImpl;
 import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSink;
+import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSinkWrapped;
 import org.apache.cxf.ws.eventing.integration.notificationapi.FireEvent;
 import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.ReferenceParametersAssertingHandler;
 import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.WSAActionAssertingHandler;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class NotificationTest extends SimpleEventingIntegrationTest {
@@ -233,4 +236,51 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
                     + received);
         }
     }
+
+    @Test
+    @Ignore
+    public void withWSAActionWrapped() throws Exception {
+        NotificatorService service = createService();
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(
+                DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT0S")));
+        subscribe.setExpires(exp);
+
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
+
+        AttributedURIType eventSinkAddr = new AttributedURIType();
+        eventSinkAddr.setValue("local://EventSink2");
+        eventSinkERT.setAddress(eventSinkAddr);
+        subscribe.setDelivery(new DeliveryType());
+        subscribe.setFormat(new FormatType());
+        subscribe.getFormat().setName("http://www.w3.org/2011/03/ws-evt/DeliveryFormats/Wrap");
+        subscribe.getDelivery().getContent().add(new NotifyTo());
+        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
+
+
+        eventSourceClient.subscribeOp(subscribe);
+
+        Server eventSinkServer = createEventSinkWithWSAActionAssertion("local://EventSink2", "http://www.fire.com");
+        TestingEventSinkImpl.RECEIVED_FIRES.set(0);
+        service.start();
+        Emitter emitter = new EmitterImpl(service);
+        emitter.dispatch(new FireEvent("Canada", 8));
+        for (int i = 0; i < 10; i++) {
+            if (TestingEventSinkImpl.RECEIVED_FIRES.get() == 1) {
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        eventSinkServer.stop();
+        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 1) {
+            Assert.fail("TestingEventSinkImpl should have received 1 events but received "
+                    + TestingEventSinkImpl.RECEIVED_FIRES.get());
+        }
+    }
+
 }

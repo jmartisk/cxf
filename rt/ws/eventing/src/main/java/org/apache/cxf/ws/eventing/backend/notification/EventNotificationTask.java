@@ -29,6 +29,10 @@ import org.w3c.dom.Element;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.jaxws.binding.soap.JaxWsSoapBindingConfiguration;
+import org.apache.cxf.jaxws.support.JaxWsServiceConfiguration;
+import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
+import org.apache.cxf.service.model.OperationInfo;
 import org.apache.cxf.transport.local.LocalTransportFactory;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.shared.handlers.ReferenceParametersAddingHandler;
@@ -74,37 +78,63 @@ class EventNotificationTask implements Runnable {
                     target.getNotificationReferenceParams());
             // register filtering interceptors TODO
 
-            // TODO wrapped delivery
 
-            JaxWsProxyFactoryBean service = new JaxWsProxyFactoryBean();
-            service.getOutInterceptors().add(new LoggingOutInterceptor());
-            service.setServiceClass(endpointInterface);
-            service.setAddress(target.getTargetURL());
-            service.setTransportId(LocalTransportFactory.TRANSPORT_ID); // TODO generalize
-            service.getHandlers().add(handler);
-            Object endpoint = service.create();
-            LOG.info("client CREATED");
-
-            // find the method to use
-            Method[] methods = endpointInterface.getMethods();
-            Method method = null;
-            for (Method i : methods) {
-                if (Arrays.equals(i.getParameterTypes(), new Class<?>[] {event.getClass()})) {
-                    method = i;
-                }
-            }
-
-            if (method != null) {
-                try {
-                    method.invoke(endpoint, event);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            if(target.isWrappedDelivery()) {
+                // TODO wrapped delivery
+                // service.getOutInterceptors().add(new EventingWrapperClassOutInterceptor());
+                System.out.println("WRAPPED :)");
             } else {
-                LOG.severe("Couldn't find corresponding method for event of type "
-                        + event.getClass().getCanonicalName() + " in event sink interface"
-                        + endpointInterface.getCanonicalName());
+                JaxWsProxyFactoryBean service = new JaxWsProxyFactoryBean();
+                service.getOutInterceptors().add(new LoggingOutInterceptor());
+                service.setServiceClass(endpointInterface);
+                service.setAddress(target.getTargetURL());
+                service.setTransportId(LocalTransportFactory.TRANSPORT_ID); // TODO generalize
+                service.getHandlers().add(handler);
+
+                Object endpoint = service.create();
+                System.out.println(service.getBindingConfig() + ", " + service.getBindingConfig().getClass());
+                JaxWsSoapBindingConfiguration f;
+                System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getStyle());
+                System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getUse());
+                System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getBindingName());
+                System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getBindingId());
+
+                LOG.info("client CREATED");
+
+                // find the method to use
+                Method[] methods = endpointInterface.getMethods();
+                Method method = null;
+                for (Method i : methods) {
+                    if (Arrays.equals(i.getParameterTypes(), new Class<?>[] {event.getClass()})) {
+                        method = i;
+                    }
+                }
+
+                if (method != null) {
+                    try {
+                        method.invoke(endpoint, event);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    LOG.severe("Couldn't find corresponding method for event of type "
+                            + event.getClass().getCanonicalName() + " in event sink interface"
+                            + endpointInterface.getCanonicalName());
+                }
             }
+
+
+
+//            JaxWsServiceFactoryBean iq = new JaxWsServiceFactoryBean();
+//            iq.setServiceClass(endpointInterface);
+//            Service s = i.create();
+//            JaxWsServiceConfiguration config = (JaxWsServiceConfiguration )iq
+// .getServiceConfigurations().get(0);
+//            JaxWsServiceConfiguration customConfig  = new JaxWsServiceConfiguration();
+
+
+
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
