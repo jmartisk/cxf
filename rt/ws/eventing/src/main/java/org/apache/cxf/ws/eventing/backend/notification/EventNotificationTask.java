@@ -85,7 +85,6 @@ class EventNotificationTask implements Runnable {
                 service.getOutInterceptors().add(new LoggingOutInterceptor());
                 service.setServiceClass(endpointInterface);
                 service.setAddress(target.getTargetURL());
-                service.setTransportId(LocalTransportFactory.TRANSPORT_ID); // TODO generalize
                 service.getHandlers().add(handler);
 
                 Object endpoint = service.create();
