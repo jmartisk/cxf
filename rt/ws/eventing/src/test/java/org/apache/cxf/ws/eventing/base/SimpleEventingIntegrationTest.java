@@ -101,7 +101,6 @@ public abstract class SimpleEventingIntegrationTest {
      */
     public SubscriptionManagerEndpoint createSubscriptionManagerClient(ReferenceParametersType refs) {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-        factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(SubscriptionManagerEndpoint.class);
         factory.setAddress(URL_SUBSCRIPTION_MANAGER);
         factory.getInInterceptors().add(new LoggingInInterceptor());
