@@ -23,10 +23,8 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.Action;
-import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.soap.Addressing;
 
-import org.apache.cxf.ws.eventing.shared.EventingConstants;
 
 @WebService
 @Addressing(enabled = true, required = true)
@@ -37,7 +35,6 @@ public interface CatastrophicEventSink {
     void earthquake(@WebParam(name = "earthquake") EarthquakeEvent ev);
 
     @Action(input = "http://www.fire.com")
-    @RequestWrapper(localName = "NotifyEvent", targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
     void fire(@WebParam(name = "fire") FireEvent ev);
 
 }
