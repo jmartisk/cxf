@@ -47,6 +47,7 @@ import org.apache.cxf.ws.eventing.base.TestUtil;
 import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.integration.eventsink.TestingEventSinkImpl;
 import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSink;
+import org.apache.cxf.ws.eventing.integration.notificationapi.EarthquakeEvent;
 import org.apache.cxf.ws.eventing.integration.notificationapi.FireEvent;
 import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.ReferenceParametersAssertingHandler;
 import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.WSAActionAssertingHandler;
@@ -398,8 +399,8 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
 
 
     /**
-     * We request only to receive notifications about fires in Russia
-     * and there will be one fire in Canada and one in Russia. We should
+     * We request only to receive notifications about earthquakes in Russia with Richter scale equal to 3.5
+     * and there will be one fire in Canada and one earthquake in Russia. We should
      * receive only one notification.
      */
     @Test
@@ -422,20 +423,20 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
 
         subscribe.setFilter(new FilterType());
-        subscribe.getFilter().getContent().add("//location[text()='Russia']");
-
+        subscribe.getFilter().getContent().add("//location[text()='Russia']/../richterScale[contains(text(),'3.5')]");
 
         eventSourceClient.subscribeOp(subscribe);
 
         Server eventSinkServer = createEventSink(url);
         TestingEventSinkImpl.RECEIVED_FIRES.set(0);
+        TestingEventSinkImpl.RECEIVED_EARTHQUAKES.set(0);
 
         service.start();
         Emitter emitter = new EmitterImpl(service);
         emitter.dispatch(new FireEvent("Canada", 8));
-        emitter.dispatch(new FireEvent("Russia", 8));
+        emitter.dispatch(new EarthquakeEvent(3.5f, "Russia"));
         for (int i = 0; i < 10; i++) {
-            if (TestingEventSinkImpl.RECEIVED_FIRES.get() == 1) {
+            if (TestingEventSinkImpl.RECEIVED_EARTHQUAKES.get() == 1) {
                 break;
             }
             try {
@@ -445,8 +446,12 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
             }
         }
         eventSinkServer.stop();
-        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 1) {
-            Assert.fail("TestingEventSinkImpl should have received 0 events but received "
+        if (TestingEventSinkImpl.RECEIVED_EARTHQUAKES.get() != 1) {
+            Assert.fail("TestingEventSinkImpl should have received 1 earthquake event but received "
+                    + TestingEventSinkImpl.RECEIVED_EARTHQUAKES.get());
+        }
+        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 0) {
+            Assert.fail("TestingEventSinkImpl should have not received a fire event"
                     + TestingEventSinkImpl.RECEIVED_FIRES.get());
         }
     }
