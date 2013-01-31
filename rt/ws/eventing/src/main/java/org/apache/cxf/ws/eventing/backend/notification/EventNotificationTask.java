@@ -30,9 +30,6 @@ import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.binding.soap.JaxWsSoapBindingConfiguration;
-import org.apache.cxf.jaxws.support.JaxWsServiceConfiguration;
-import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
-import org.apache.cxf.service.model.OperationInfo;
 import org.apache.cxf.transport.local.LocalTransportFactory;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.shared.handlers.ReferenceParametersAddingHandler;
@@ -79,7 +76,7 @@ class EventNotificationTask implements Runnable {
             // register filtering interceptors TODO
 
 
-            if(target.isWrappedDelivery()) {
+            if (target.isWrappedDelivery()) {
                 // TODO wrapped delivery
                 // service.getOutInterceptors().add(new EventingWrapperClassOutInterceptor());
                 System.out.println("WRAPPED :)");
@@ -93,7 +90,6 @@ class EventNotificationTask implements Runnable {
 
                 Object endpoint = service.create();
                 System.out.println(service.getBindingConfig() + ", " + service.getBindingConfig().getClass());
-                JaxWsSoapBindingConfiguration f;
                 System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getStyle());
                 System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getUse());
                 System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getBindingName());

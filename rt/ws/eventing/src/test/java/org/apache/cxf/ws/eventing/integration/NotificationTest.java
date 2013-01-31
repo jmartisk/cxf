@@ -45,7 +45,6 @@ import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
 import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.integration.eventsink.TestingEventSinkImpl;
 import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSink;
-import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSinkWrapped;
 import org.apache.cxf.ws.eventing.integration.notificationapi.FireEvent;
 import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.ReferenceParametersAssertingHandler;
 import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.WSAActionAssertingHandler;
