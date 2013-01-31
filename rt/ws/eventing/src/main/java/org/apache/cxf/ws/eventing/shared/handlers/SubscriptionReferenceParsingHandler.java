@@ -31,7 +31,7 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.w3c.dom.Element;
 import org.apache.cxf.common.logging.LogUtils;
-import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerImpl;
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
 
 /**
  * Subscription reference parsing handler is a SOAP handler on the Subscription Manager's side
@@ -43,6 +43,21 @@ import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerImpl;
 public class SubscriptionReferenceParsingHandler implements SOAPHandler<SOAPMessageContext> {
 
     private static final Logger LOG = LogUtils.getLogger(SubscriptionReferenceParsingHandler.class);
+
+    private final String namespace;
+    private final String elementName;
+
+    public SubscriptionReferenceParsingHandler(String namespace, String elementName) {
+        this.namespace = namespace;
+        this.elementName = elementName;
+    }
+
+    public SubscriptionReferenceParsingHandler() {
+        this.namespace = EventingConstants.SUBSCRIPTION_ID_DEFAULT_NAMESPACE;
+        this.elementName = EventingConstants.SUBSCRIPTION_ID_DEFAULT_ELEMENT_NAME;
+    }
+
+
 
     @Override
     public Set<QName> getHeaders() {
@@ -62,8 +77,8 @@ public class SubscriptionReferenceParsingHandler implements SOAPHandler<SOAPMess
             LOG.finer("Examining header elements");
             while (headerElements.hasNext()) {
                 o = (Element)headerElements.next();
-                if (o.getNamespaceURI().equals(SubscriptionManagerImpl.SUBSCRIPTION_ID_NAMESPACE)
-                        && o.getLocalName().equals(SubscriptionManagerImpl.SUBSCRIPTION_ID)) {
+                if (o.getNamespaceURI().equals(namespace)
+                        && o.getLocalName().equals(elementName)) {
                     LOG.fine("found UUID parameter in header, uuid=" + o.getTextContent());
                     context.put("uuid", o.getTextContent());
                 }

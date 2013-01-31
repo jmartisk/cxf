@@ -59,19 +59,25 @@ import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
  */
 public class SubscriptionManagerImpl implements SubscriptionManager {
 
-    public static final String SUBSCRIPTION_ID_NAMESPACE = "http://cxf.apache.org/ws-eventing";
-    public static final String SUBSCRIPTION_ID = "SubscriptionID";
     protected static final Logger LOG = LogUtils.getLogger(SubscriptionManagerImpl.class);
 
     protected SubscriptionDatabase database;
+    private final String subscriptionIdNamespace;
+    private final String subscriptionIdElementName;
     private String url;
 
     public SubscriptionManagerImpl(String url) {
         database = new SubscriptionDatabaseImpl();
+        this.subscriptionIdNamespace = EventingConstants.SUBSCRIPTION_ID_DEFAULT_NAMESPACE;
+        this.subscriptionIdElementName = EventingConstants.SUBSCRIPTION_ID_DEFAULT_ELEMENT_NAME;
         this.url = url;
     }
 
-    private SubscriptionManagerImpl() {
+    public  SubscriptionManagerImpl(String url, String namespace, String elementName) {
+        database = new SubscriptionDatabaseImpl();
+        this.url = url;
+        this.subscriptionIdNamespace = namespace;
+        this.subscriptionIdElementName = elementName;
     }
 
 
@@ -193,7 +199,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         subscriptionManagerReference.setAddress(getSubscriptionManagerAddress());
         // generate a ID for this subscription
         UUID uuid = UUID.randomUUID();
-        JAXBElement idqn = new JAXBElement(new QName(SUBSCRIPTION_ID_NAMESPACE, SUBSCRIPTION_ID),
+        JAXBElement idqn = new JAXBElement(new QName(subscriptionIdNamespace, subscriptionIdElementName),
                 String.class,
                 uuid.toString());
         subscriptionManagerReference.setReferenceParameters(new ReferenceParametersType());

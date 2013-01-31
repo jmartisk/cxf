@@ -60,6 +60,9 @@ public final class EventingConstants {
     public static final String DELIVERY_FORMAT_UNWRAPPED
         = "http://www.w3.org/2011/03/ws-evt/DeliveryFormats/Unwrap";
 
+    public static final String SUBSCRIPTION_ID_DEFAULT_NAMESPACE = "http://cxf.apache.org/ws-eventing";
+    public static final String SUBSCRIPTION_ID_DEFAULT_ELEMENT_NAME = "SubscriptionID";
+
     private EventingConstants() {
 
     }
