@@ -28,9 +28,9 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Element;
+
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.FilterType;
-import org.apache.cxf.ws.eventing.shared.faults.EmptyFilter;
 
 public final class FilteringUtil {
 
@@ -59,7 +59,7 @@ public final class FilteringUtil {
             return (Boolean)xPathExpression.evaluate(elm, XPathConstants.BOOLEAN);
         } catch (XPathExpressionException ex) {
             LOG.severe(ex.toString());
-            throw new EmptyFilter();
+            return false;
         }
     }
 

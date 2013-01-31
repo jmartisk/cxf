@@ -29,8 +29,6 @@ import org.w3c.dom.Element;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.jaxws.binding.soap.JaxWsSoapBindingConfiguration;
-import org.apache.cxf.transport.local.LocalTransportFactory;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.shared.handlers.ReferenceParametersAddingHandler;
 
@@ -73,8 +71,6 @@ class EventNotificationTask implements Runnable {
             ReferenceParametersAddingHandler handler = new
                     ReferenceParametersAddingHandler(
                     target.getNotificationReferenceParams());
-            // register filtering interceptors TODO
-
 
             if (target.isWrappedDelivery()) {
                 // TODO wrapped delivery
@@ -87,14 +83,12 @@ class EventNotificationTask implements Runnable {
                 service.setAddress(target.getTargetURL());
                 service.getHandlers().add(handler);
 
-                Object endpoint = service.create();
-                System.out.println(service.getBindingConfig() + ", " + service.getBindingConfig().getClass());
-                System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getStyle());
-                System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getUse());
-                System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getBindingName());
-                System.out.println(((JaxWsSoapBindingConfiguration)service.getBindingConfig()).getBindingId());
+                // do we need to apply a filter?
+                if (target.getFilter() != null && target.getFilter().getContent().size() > 0) {
+                    service.getOutInterceptors().add(new FilteringInterceptor(target.getFilter()));
+                }
 
-                LOG.info("client CREATED");
+                Object endpoint = service.create();
 
                 // find the method to use
                 Method[] methods = endpointInterface.getMethods();

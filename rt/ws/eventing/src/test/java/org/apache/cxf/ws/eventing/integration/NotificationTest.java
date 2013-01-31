@@ -33,6 +33,7 @@ import org.apache.cxf.ws.eventing.AttributedURIType;
 import org.apache.cxf.ws.eventing.DeliveryType;
 import org.apache.cxf.ws.eventing.EndpointReferenceType;
 import org.apache.cxf.ws.eventing.ExpirationType;
+import org.apache.cxf.ws.eventing.FilterType;
 import org.apache.cxf.ws.eventing.FormatType;
 import org.apache.cxf.ws.eventing.NotifyTo;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
@@ -42,6 +43,7 @@ import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
 import org.apache.cxf.ws.eventing.backend.notification.emitters.Emitter;
 import org.apache.cxf.ws.eventing.backend.notification.emitters.EmitterImpl;
 import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
+import org.apache.cxf.ws.eventing.base.TestUtil;
 import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.integration.eventsink.TestingEventSinkImpl;
 import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSink;
@@ -105,7 +107,8 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         EndpointReferenceType eventSinkERT = new EndpointReferenceType();
 
         AttributedURIType eventSinkAddr = new AttributedURIType();
-        eventSinkAddr.setValue("local://EventSink");
+        String url = TestUtil.generateRandomURLWithLocalTransport();
+        eventSinkAddr.setValue(url);
         eventSinkERT.setAddress(eventSinkAddr);
         subscribe.setDelivery(new DeliveryType());
         subscribe.getDelivery().getContent().add(new NotifyTo());
@@ -116,7 +119,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         eventSourceClient.subscribeOp(subscribe);
         eventSourceClient.subscribeOp(subscribe);
 
-        Server eventSinkServer = createEventSink("local://EventSink");
+        Server eventSinkServer = createEventSink(url);
         TestingEventSinkImpl.RECEIVED_FIRES.set(0);
 
         service.start();
@@ -151,7 +154,8 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         EndpointReferenceType eventSinkERT = new EndpointReferenceType();
 
         AttributedURIType eventSinkAddr = new AttributedURIType();
-        eventSinkAddr.setValue("local://EventSink2");
+        String url = TestUtil.generateRandomURLWithLocalTransport();
+        eventSinkAddr.setValue(url);
         eventSinkERT.setAddress(eventSinkAddr);
         subscribe.setDelivery(new DeliveryType());
         subscribe.getDelivery().getContent().add(new NotifyTo());
@@ -160,7 +164,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
 
         eventSourceClient.subscribeOp(subscribe);
 
-        Server eventSinkServer = createEventSinkWithWSAActionAssertion("local://EventSink2", "http://www.fire.com");
+        Server eventSinkServer = createEventSinkWithWSAActionAssertion(url, "http://www.fire.com");
         TestingEventSinkImpl.RECEIVED_FIRES.set(0);
         service.start();
         Emitter emitter = new EmitterImpl(service);
@@ -203,7 +207,8 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         eventSinkERT.getReferenceParameters().getAny().add(idqn);
         eventSinkERT.getReferenceParameters().getAny().add(idqn2);
         AttributedURIType eventSinkAddr = new AttributedURIType();
-        eventSinkAddr.setValue("local://EventSink3");
+        String url = TestUtil.generateRandomURLWithLocalTransport();
+        eventSinkAddr.setValue(url);
         eventSinkERT.setAddress(eventSinkAddr);
         subscribe.setDelivery(new DeliveryType());
         subscribe.getDelivery().getContent().add(new NotifyTo());
@@ -212,7 +217,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
 
         eventSourceClient.subscribeOp(subscribe);
 
-        Server eventSinkServer = createEventSinkWithReferenceParametersAssertion("local://EventSink3",
+        Server eventSinkServer = createEventSinkWithReferenceParametersAssertion(url,
                 eventSinkERT.getReferenceParameters());
         TestingEventSinkImpl.RECEIVED_FIRES.set(0);
         service.start();
@@ -249,7 +254,8 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         EndpointReferenceType eventSinkERT = new EndpointReferenceType();
 
         AttributedURIType eventSinkAddr = new AttributedURIType();
-        eventSinkAddr.setValue("local://EventSink2");
+        String url = TestUtil.generateRandomURLWithLocalTransport();
+        eventSinkAddr.setValue(url);
         eventSinkERT.setAddress(eventSinkAddr);
         subscribe.setDelivery(new DeliveryType());
         subscribe.setFormat(new FormatType());
@@ -260,7 +266,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
 
         eventSourceClient.subscribeOp(subscribe);
 
-        Server eventSinkServer = createEventSinkWithWSAActionAssertion("local://EventSink2", "http://www.fire.com");
+        Server eventSinkServer = createEventSinkWithWSAActionAssertion(url, "http://www.fire.com");
         TestingEventSinkImpl.RECEIVED_FIRES.set(0);
         service.start();
         Emitter emitter = new EmitterImpl(service);
@@ -278,6 +284,169 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         eventSinkServer.stop();
         if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 1) {
             Assert.fail("TestingEventSinkImpl should have received 1 events but received "
+                    + TestingEventSinkImpl.RECEIVED_FIRES.get());
+        }
+    }
+
+
+
+    /**
+     * We request only to receive notifications about fires in Canada
+     * and there will be a fire in Canada. We should receive
+     * this notification.
+     */
+    @Test
+    public void withFilter() throws IOException {
+        NotificatorService service = createService();
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(
+                DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT0S")));
+        subscribe.setExpires(exp);
+
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
+
+        AttributedURIType eventSinkAddr = new AttributedURIType();
+        String url = TestUtil.generateRandomURLWithLocalTransport();
+        eventSinkAddr.setValue(url);
+        eventSinkERT.setAddress(eventSinkAddr);
+        subscribe.setDelivery(new DeliveryType());
+        subscribe.getDelivery().getContent().add(new NotifyTo());
+        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
+
+        subscribe.setFilter(new FilterType());
+        subscribe.getFilter().getContent().add("//location[text()='Canada']");
+
+
+        eventSourceClient.subscribeOp(subscribe);
+
+        Server eventSinkServer = createEventSink(url);
+        TestingEventSinkImpl.RECEIVED_FIRES.set(0);
+
+        service.start();
+        Emitter emitter = new EmitterImpl(service);
+        emitter.dispatch(new FireEvent("Canada", 8));
+        for (int i = 0; i < 10; i++) {
+            if (TestingEventSinkImpl.RECEIVED_FIRES.get() == 1) {
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        eventSinkServer.stop();
+        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 1) {
+            Assert.fail("TestingEventSinkImpl should have received 1 events but received "
+                    + TestingEventSinkImpl.RECEIVED_FIRES.get());
+        }
+    }
+
+    /**
+     * We request only to receive notifications about fires in Russia
+     * and there will be only a fire in Canada. We should not receive
+     * this notification.
+     */
+    @Test
+    public void withFilterNegative() throws IOException {
+        NotificatorService service = createService();
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(
+                DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT0S")));
+        subscribe.setExpires(exp);
+
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
+
+        AttributedURIType eventSinkAddr = new AttributedURIType();
+        String url = TestUtil.generateRandomURLWithLocalTransport();
+        eventSinkAddr.setValue(url);
+        eventSinkERT.setAddress(eventSinkAddr);
+        subscribe.setDelivery(new DeliveryType());
+        subscribe.getDelivery().getContent().add(new NotifyTo());
+        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
+
+        subscribe.setFilter(new FilterType());
+        subscribe.getFilter().getContent().add("//location[text()='Russia']");
+
+
+        eventSourceClient.subscribeOp(subscribe);
+
+        Server eventSinkServer = createEventSink(url);
+        TestingEventSinkImpl.RECEIVED_FIRES.set(0);
+
+        service.start();
+        Emitter emitter = new EmitterImpl(service);
+        emitter.dispatch(new FireEvent("Canada", 8));
+        for (int i = 0; i < 10; i++) {
+            if (TestingEventSinkImpl.RECEIVED_FIRES.get() == 0) {
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        eventSinkServer.stop();
+        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 0) {
+            Assert.fail("TestingEventSinkImpl should have received 0 events but received "
+                    + TestingEventSinkImpl.RECEIVED_FIRES.get());
+        }
+    }
+
+
+    /**
+     * We request only to receive notifications about fires in Russia
+     * and there will be one fire in Canada and one in Russia. We should
+     * receive only one notification.
+     */
+    @Test
+    public void withFilter2() throws IOException {
+        NotificatorService service = createService();
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(
+                DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT0S")));
+        subscribe.setExpires(exp);
+
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
+
+        AttributedURIType eventSinkAddr = new AttributedURIType();
+        String url = TestUtil.generateRandomURLWithLocalTransport();
+        eventSinkAddr.setValue(url);
+        eventSinkERT.setAddress(eventSinkAddr);
+        subscribe.setDelivery(new DeliveryType());
+        subscribe.getDelivery().getContent().add(new NotifyTo());
+        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
+
+        subscribe.setFilter(new FilterType());
+        subscribe.getFilter().getContent().add("//location[text()='Russia']");
+
+
+        eventSourceClient.subscribeOp(subscribe);
+
+        Server eventSinkServer = createEventSink(url);
+        TestingEventSinkImpl.RECEIVED_FIRES.set(0);
+
+        service.start();
+        Emitter emitter = new EmitterImpl(service);
+        emitter.dispatch(new FireEvent("Canada", 8));
+        emitter.dispatch(new FireEvent("Russia", 8));
+        for (int i = 0; i < 10; i++) {
+            if (TestingEventSinkImpl.RECEIVED_FIRES.get() == 1) {
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        eventSinkServer.stop();
+        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 1) {
+            Assert.fail("TestingEventSinkImpl should have received 0 events but received "
                     + TestingEventSinkImpl.RECEIVED_FIRES.get());
         }
     }
