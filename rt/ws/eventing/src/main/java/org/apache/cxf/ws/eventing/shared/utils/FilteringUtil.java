@@ -38,6 +38,7 @@ public final class FilteringUtil {
     public static final String NAMESPACE_XPATH20 = "http://www.w3.org/2011/03/ws-evt/Dialects/XPath20";
 
     private static final Logger LOG = LogUtils.getLogger(FilteringUtil.class);
+    private static XPathFactory xPathFactory =  XPathFactory.newInstance();
 
     private FilteringUtil() {
 
@@ -53,7 +54,7 @@ public final class FilteringUtil {
         }
         String xPathString = (String)filter.getContent().get(0);
         try {
-            XPathFactory xPathFactory = XPathFactory.newInstance();
+//            XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
             XPathExpression xPathExpression = xPath.compile(xPathString);
             return (Boolean)xPathExpression.evaluate(elm, XPathConstants.BOOLEAN);
@@ -68,7 +69,6 @@ public final class FilteringUtil {
             return true;
         }
         try {
-            XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
             xPath.compile(xPathString);
             return true;
