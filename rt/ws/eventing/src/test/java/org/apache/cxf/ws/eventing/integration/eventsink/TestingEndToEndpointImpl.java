@@ -21,29 +21,23 @@ package org.apache.cxf.ws.eventing.integration.eventsink;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
+import javax.jws.WebParam;
 
 import org.apache.cxf.common.logging.LogUtils;
-import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSink;
-import org.apache.cxf.ws.eventing.integration.notificationapi.EarthquakeEvent;
-import org.apache.cxf.ws.eventing.integration.notificationapi.FireEvent;
+import org.apache.cxf.ws.eventing.SubscriptionEnd;
+import org.apache.cxf.ws.eventing.client.EndToEndpoint;
 
-public class TestingEventSinkImpl implements CatastrophicEventSink {
+public class TestingEndToEndpointImpl implements EndToEndpoint {
 
-    public static final AtomicInteger RECEIVED_EARTHQUAKES = new AtomicInteger(0);
-    public static final AtomicInteger RECEIVED_FIRES = new AtomicInteger(0);
+    public static final AtomicInteger RECEIVED_ENDS = new AtomicInteger(0);
 
-    protected static final Logger LOG = LogUtils.getLogger(TestingEventSinkImpl.class);
+    protected static final Logger LOG = LogUtils.getLogger(TestingEndToEndpointImpl.class);
 
 
     @Override
-    public void earthquake(EarthquakeEvent ev) {
-        LOG.info("Event sink received an event: " + ev.toString());
-        RECEIVED_EARTHQUAKES.incrementAndGet();
+    public void subscriptionEnd(@WebParam SubscriptionEnd subscriptionEnd) {
+        LOG.info("Received subscription end: " + subscriptionEnd.getStatus());
+        RECEIVED_ENDS.incrementAndGet();
     }
 
-    @Override
-    public void fire(FireEvent ev) {
-        LOG.info("Event sink received an event: " + ev.toString());
-        RECEIVED_FIRES.incrementAndGet();
-    }
 }

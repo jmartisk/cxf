@@ -20,16 +20,20 @@
 package org.apache.cxf.ws.eventing.client;
 
 
-import javax.jws.Oneway;
 import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.Action;
+import javax.xml.ws.soap.Addressing;
 
 import org.apache.cxf.ws.eventing.SubscriptionEnd;
 import org.apache.cxf.ws.eventing.shared.EventingConstants;
 
+@WebService
+@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@Addressing(enabled = true, required = true)
 public interface EndToEndpoint {
 
-    @Oneway
     @Action(
             input = EventingConstants.ACTION_SUBSCRIPTION_END
     )

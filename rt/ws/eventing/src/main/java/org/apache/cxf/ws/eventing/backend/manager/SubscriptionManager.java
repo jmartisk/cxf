@@ -19,6 +19,10 @@
 
 package org.apache.cxf.ws.eventing.backend.manager;
 
+import java.util.UUID;
+
+import org.apache.cxf.ws.eventing.backend.notification.SubscriptionEndStatus;
+
 /**
  * The core functionality representing WS-Eventing backend logic. It holds an instance of a database and
  * acts as a layer for communicating with it. There are two interfaces which are used to communicate
@@ -27,5 +31,10 @@ package org.apache.cxf.ws.eventing.backend.manager;
  * - SubscriptionManagerInterfaceForEventSources is used by the event source Web Service
  */
 public interface SubscriptionManager
-        extends SubscriptionManagerInterfaceForManagers, SubscriptionManagerInterfaceForEventSources {
+        extends SubscriptionManagerInterfaceForManagers,
+        SubscriptionManagerInterfaceForEventSources,
+        SubscriptionManagerInterfaceForNotificators {
+
+    void subscriptionEnd(UUID subscriptionId, String reason, SubscriptionEndStatus status);
+
 }

@@ -63,6 +63,14 @@ public final class EventingConstants {
     public static final String SUBSCRIPTION_ID_DEFAULT_NAMESPACE = "http://cxf.apache.org/ws-eventing";
     public static final String SUBSCRIPTION_ID_DEFAULT_ELEMENT_NAME = "SubscriptionID";
 
+    public static final String SUBSCRIPTION_END_DELIVERY_FAILURE
+        = "http://www.w3.org/2011/03/ws-evt/DeliveryFailure";
+    public static final String SUBSCRIPTION_END_SHUTTING_DOWN
+        = "http://www.w3.org/2011/03/ws-evt/SourceShuttingDown";
+    public static final String SUBSCRIPTION_END_SOURCE_CANCELLING
+        = "http://www.w3.org/2011/03/ws-evt/SourceCancelling";
+
+
     private EventingConstants() {
 
     }

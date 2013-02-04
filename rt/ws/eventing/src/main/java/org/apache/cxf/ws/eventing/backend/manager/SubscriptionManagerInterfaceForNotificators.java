@@ -17,20 +17,18 @@
  * under the License.
  */
 
-package org.apache.cxf.ws.eventing.backend.notification.emitters;
+package org.apache.cxf.ws.eventing.backend.manager;
 
+
+import java.util.List;
+
+import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
 
-public class EmitterImpl implements Emitter {
+public interface SubscriptionManagerInterfaceForNotificators {
 
-    private final NotificatorService service;
+    List<SubscriptionTicket> getTickets();
 
-    public EmitterImpl(NotificatorService service) {
-        this.service = service;
-    }
+    void registerNotificator(NotificatorService notificator);
 
-    @Override
-    public void dispatch(Object event) {
-        service.dispatchEvent(event);
-    }
 }

@@ -20,17 +20,14 @@
 package org.apache.cxf.ws.eventing.backend.notification;
 
 
-import java.net.URI;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Element;
 
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
-import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
+import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerInterfaceForNotificators;
 
 
 /**
@@ -48,54 +45,19 @@ public abstract class NotificatorService {
     private ExecutorService service;
 
     public NotificatorService() {
-
     }
 
-    /**
-     * The NotificatorService will always ask for the current list of subscriptions after it
-     * receives an event to handle. The list can contain expired subscriptions or those
-     * not conforming to current event's filters. NotificatorService will take care of filtering them.
-     */
-    protected abstract List<SubscriptionTicket> obtainSubscriptions();
+    protected abstract SubscriptionManagerInterfaceForNotificators obtainManager();
 
     protected abstract Class getEventSinkInterface();
 
-    /**
-     * Call this method when an WS-Eventing event appears. It will pass the event to this NotificatorService,
-     * which will then take care of notifying the subscribers.
-     *
-     * @param eventAction the WS-Addressing action associated with the event
-     * @param message     the actual XML payload of the event
-     * @throws IllegalStateException if this NotificatorService is not started
-     */
-    @Deprecated
-    public void dispatch(URI eventAction, Element message) {
-        LOG.info("NotificatorService received an event with payload: " + message);
-        if (service == null) {
-            throw new IllegalStateException("NotificatorService is not started. "
-                    + "Please call the start() method before passing any events to it.");
-        }
-        for (SubscriptionTicket ticket : obtainSubscriptions()) {
-            LOG.info("ticket: " + ticket.getUuid());
-            if (FilteringUtil.doesConformToFilter(message, ticket.getFilter())) {
-                if (!ticket.isExpired()) {
-                    service.submit(new EventNotificationTask(ticket, eventAction, message));
-                } else {
-                    LOG.info("Ticket expired at " + ticket.getExpires().toXMLFormat());
-                }
-            } else {
-                LOG.info("Filter " + ticket.getFilter() + " doesn't apply to this message.");
-            }
-        }
-    }
-
-    public void dispatch(Object event) {
+    public void dispatchEvent(Object event) {
         LOG.info("NotificatorService received an event: " + event);
         if (service == null) {
             throw new IllegalStateException("NotificatorService is not started. "
                     + "Please call the start() method before passing any events to it.");
         }
-        for (SubscriptionTicket ticket : obtainSubscriptions()) {
+        for (SubscriptionTicket ticket : obtainManager().getTickets()) {
             if (!ticket.isExpired()) {
                 service.submit(new EventNotificationTask(ticket, event, getEventSinkInterface()));
             } else {
@@ -104,11 +66,19 @@ public abstract class NotificatorService {
         }
     }
 
+    public void subscriptionEnd(SubscriptionTicket ticket, String reason, SubscriptionEndStatus status) {
+        LOG.info("NotificatorService will notify about subscription end for ticket=" + ticket.getUuid()
+            + "; reason=" + reason);
+        service.submit(new SubscriptionEndNotificationTask(ticket, reason, status));
+    }
+
+
     /**
      * Starts this NotificatorService. You MUST run this method on every instance
      * before starting to pass any events to it. Run it only once.
      */
     public void start() {
+        obtainManager().registerNotificator(this);
         service = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE);
     }
 

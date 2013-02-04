@@ -43,6 +43,8 @@ import org.apache.cxf.ws.eventing.ReferenceParametersType;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionDatabase;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionDatabaseImpl;
 import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
+import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
+import org.apache.cxf.ws.eventing.backend.notification.SubscriptionEndStatus;
 import org.apache.cxf.ws.eventing.shared.EventingConstants;
 import org.apache.cxf.ws.eventing.shared.faults.CannotProcessFilter;
 import org.apache.cxf.ws.eventing.shared.faults.DeliveryFormatRequestedUnavailable;
@@ -61,10 +63,11 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
     protected static final Logger LOG = LogUtils.getLogger(SubscriptionManagerImpl.class);
 
-    protected SubscriptionDatabase database;
+    protected final SubscriptionDatabase database;
     private final String subscriptionIdNamespace;
     private final String subscriptionIdElementName;
     private String url;
+    private NotificatorService notificator;
 
     public SubscriptionManagerImpl(String url) {
         database = new SubscriptionDatabaseImpl();
@@ -302,4 +305,21 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         return response;
     }
 
+    @Override
+    public void subscriptionEnd(UUID subscriptionId, String reason, SubscriptionEndStatus status) {
+        synchronized (database) {
+            SubscriptionTicket ticket = database.findById(subscriptionId);
+            if (ticket != null) {
+                notificator.subscriptionEnd(ticket, reason, status);
+                database.removeTicketByUUID(subscriptionId);
+            } else {
+                LOG.severe("No such subscription: " + subscriptionId);
+            }
+        }
+    }
+
+    @Override
+    public void registerNotificator(NotificatorService service) {
+        this.notificator = service;
+    }
 }

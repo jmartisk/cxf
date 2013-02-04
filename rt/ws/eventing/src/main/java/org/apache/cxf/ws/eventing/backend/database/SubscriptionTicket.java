@@ -115,6 +115,19 @@ public class SubscriptionTicket {
                 .getAddress().getValue().trim();
     }
 
+    /**
+     * Convenience method to extract the subscribed target URL.
+     *
+     * @return
+     */
+    public String getEndToURL() {
+        try {
+            return this.getEndTo().getAddress().getValue();
+        } catch (NullPointerException ex) {
+            return null;
+        }
+    }
+
     public boolean isWrappedDelivery() {
         return wrappedDelivery;
     }
@@ -127,4 +140,5 @@ public class SubscriptionTicket {
         return ((org.apache.cxf.ws.eventing.NotifyTo)this
                 .getDelivery().getContent().get(0)).getValue().getReferenceParameters();
     }
+
 }

@@ -29,10 +29,19 @@ import org.apache.cxf.ws.eventing.AttributedURIType;
 import org.apache.cxf.ws.eventing.EndpointReferenceType;
 import org.apache.cxf.ws.eventing.NotifyTo;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
+import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerInterfaceForNotificators;
+import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
+import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.base.services.TestingEventSource;
 import org.apache.cxf.ws.eventing.base.services.TestingSubscriptionManager;
 import org.apache.cxf.ws.eventing.eventsource.EventSourceEndpoint;
+import org.apache.cxf.ws.eventing.integration.eventsink.TestingEndToEndpointImpl;
+import org.apache.cxf.ws.eventing.integration.eventsink.TestingEventSinkImpl;
+import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSink;
+import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.ReferenceParametersAssertingHandler;
+import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.WSAActionAssertingHandler;
 import org.apache.cxf.ws.eventing.manager.SubscriptionManagerEndpoint;
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
 import org.apache.cxf.ws.eventing.shared.handlers.ReferenceParametersAddingHandler;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,6 +63,63 @@ public abstract class SimpleEventingIntegrationTest {
     static Server eventSource;
     static Server subscriptionManager;
     protected EventSourceEndpoint eventSourceClient;
+
+    protected NotificatorService createNotificatorService() {
+        return new NotificatorService() {
+
+            @Override
+            protected SubscriptionManagerInterfaceForNotificators obtainManager() {
+                return SingletonSubscriptionManagerContainer.getInstance();
+            }
+
+            @Override
+            protected Class getEventSinkInterface() {
+                return CatastrophicEventSink.class;
+            }
+        };
+    }
+
+    protected Server createEndToEndpoint(String address) {
+        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
+        factory.setServiceBean(new TestingEndToEndpointImpl());
+        factory.setAddress(address);
+        factory.getHandlers().add(new WSAActionAssertingHandler(EventingConstants.ACTION_SUBSCRIPTION_END));
+        return factory.create();
+    }
+
+    protected Server createEndToEndpointWithReferenceParametersAssertion(String address,
+                                                                         ReferenceParametersType params) {
+        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
+        factory.setServiceBean(new TestingEndToEndpointImpl());
+        factory.setAddress(address);
+        factory.getHandlers().add(new ReferenceParametersAssertingHandler(params));
+        factory.getHandlers().add(new WSAActionAssertingHandler(EventingConstants.ACTION_SUBSCRIPTION_END));
+        return factory.create();
+    }
+
+    protected Server createEventSink(String address) {
+        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
+        factory.setServiceBean(new TestingEventSinkImpl());
+        factory.setAddress(address);
+        return factory.create();
+    }
+
+    protected Server createEventSinkWithWSAActionAssertion(String address, String action) {
+        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
+        factory.setServiceBean(new TestingEventSinkImpl());
+        factory.setAddress(address);
+        factory.getHandlers().add(new WSAActionAssertingHandler(action));
+        return factory.create();
+    }
+
+    protected Server createEventSinkWithReferenceParametersAssertion(String address, ReferenceParametersType params) {
+        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
+        factory.setServiceBean(new TestingEventSinkImpl());
+        factory.setAddress(address);
+        factory.getHandlers().add(new ReferenceParametersAssertingHandler(params));
+        return factory.create();
+    }
+
 
     /**
      * Prepares the Event Source and Subscription Manager services

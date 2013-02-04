@@ -20,11 +20,8 @@
 package org.apache.cxf.ws.eventing.backend.notification;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.logging.Logger;
-
-import org.w3c.dom.Element;
 
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
@@ -40,17 +37,8 @@ class EventNotificationTask implements Runnable {
     protected static final Logger LOG = LogUtils.getLogger(EventNotificationTask.class);
 
     SubscriptionTicket target;
-    URI action;
-    Element message;
     Object event;
     Class endpointInterface;
-
-    @Deprecated
-    EventNotificationTask(SubscriptionTicket subscription, URI eventAction, Element message) {
-        this.target = subscription;
-        this.action = eventAction;
-        this.message = message;
-    }
 
     public EventNotificationTask(SubscriptionTicket ticket, Object event, Class endpointInterface) {
         this.target = ticket;
@@ -111,18 +99,6 @@ class EventNotificationTask implements Runnable {
                             + endpointInterface.getCanonicalName());
                 }
             }
-
-
-
-//            JaxWsServiceFactoryBean iq = new JaxWsServiceFactoryBean();
-//            iq.setServiceClass(endpointInterface);
-//            Service s = i.create();
-//            JaxWsServiceConfiguration config = (JaxWsServiceConfiguration )iq
-// .getServiceConfigurations().get(0);
-//            JaxWsServiceConfiguration customConfig  = new JaxWsServiceConfiguration();
-
-
-
 
         } catch (Throwable e) {
             e.printStackTrace();

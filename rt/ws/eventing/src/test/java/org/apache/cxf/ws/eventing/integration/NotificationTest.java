@@ -20,7 +20,6 @@
 package org.apache.cxf.ws.eventing.integration;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -28,7 +27,6 @@ import javax.xml.namespace.QName;
 import junit.framework.Assert;
 
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.ws.eventing.AttributedURIType;
 import org.apache.cxf.ws.eventing.DeliveryType;
 import org.apache.cxf.ws.eventing.EndpointReferenceType;
@@ -38,67 +36,23 @@ import org.apache.cxf.ws.eventing.FormatType;
 import org.apache.cxf.ws.eventing.NotifyTo;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
 import org.apache.cxf.ws.eventing.Subscribe;
-import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
 import org.apache.cxf.ws.eventing.backend.notification.emitters.Emitter;
 import org.apache.cxf.ws.eventing.backend.notification.emitters.EmitterImpl;
 import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
 import org.apache.cxf.ws.eventing.base.TestUtil;
-import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.integration.eventsink.TestingEventSinkImpl;
-import org.apache.cxf.ws.eventing.integration.notificationapi.CatastrophicEventSink;
 import org.apache.cxf.ws.eventing.integration.notificationapi.EarthquakeEvent;
 import org.apache.cxf.ws.eventing.integration.notificationapi.FireEvent;
-import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.ReferenceParametersAssertingHandler;
-import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.WSAActionAssertingHandler;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class NotificationTest extends SimpleEventingIntegrationTest {
 
-    private NotificatorService createService() {
-        return new NotificatorService() {
-
-            @Override
-            protected List<SubscriptionTicket> obtainSubscriptions() {
-                return SingletonSubscriptionManagerContainer.getInstance().getTickets();
-            }
-
-            @Override
-            protected Class getEventSinkInterface() {
-                return CatastrophicEventSink.class;
-            }
-        };
-    }
-
-    private Server createEventSink(String address) {
-        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
-        factory.setServiceBean(new TestingEventSinkImpl());
-        factory.setAddress(address);
-        return factory.create();
-    }
-
-    private Server createEventSinkWithWSAActionAssertion(String address, String action) {
-        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
-        factory.setServiceBean(new TestingEventSinkImpl());
-        factory.setAddress(address);
-        factory.getHandlers().add(new WSAActionAssertingHandler(action));
-        return factory.create();
-    }
-
-    private Server createEventSinkWithReferenceParametersAssertion(String address, ReferenceParametersType params) {
-        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
-        factory.setServiceBean(new TestingEventSinkImpl());
-        factory.setAddress(address);
-        factory.getHandlers().add(new ReferenceParametersAssertingHandler(params));
-        return factory.create();
-    }
-
-
     @Test
     public void basicReceptionOfEvents() throws IOException {
-        NotificatorService service = createService();
+        NotificatorService service = createNotificatorService();
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
         exp.setValue(
@@ -145,7 +99,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
 
     @Test
     public void withWSAAction() throws Exception {
-        NotificatorService service = createService();
+        NotificatorService service = createNotificatorService();
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
         exp.setValue(
@@ -189,7 +143,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
 
     @Test
     public void withReferenceParameters() throws Exception {
-        NotificatorService service = createService();
+        NotificatorService service = createNotificatorService();
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
         exp.setValue(
@@ -245,7 +199,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
     @Test
     @Ignore
     public void withWSAActionWrapped() throws Exception {
-        NotificatorService service = createService();
+        NotificatorService service = createNotificatorService();
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
         exp.setValue(
@@ -298,7 +252,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
      */
     @Test
     public void withFilter() throws IOException {
-        NotificatorService service = createService();
+        NotificatorService service = createNotificatorService();
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
         exp.setValue(
@@ -351,7 +305,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
      */
     @Test
     public void withFilterNegative() throws IOException {
-        NotificatorService service = createService();
+        NotificatorService service = createNotificatorService();
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
         exp.setValue(
@@ -405,7 +359,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
      */
     @Test
     public void withFilter2() throws IOException {
-        NotificatorService service = createService();
+        NotificatorService service = createNotificatorService();
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
         exp.setValue(

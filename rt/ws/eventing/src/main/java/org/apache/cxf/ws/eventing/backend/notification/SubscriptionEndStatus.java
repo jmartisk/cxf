@@ -17,20 +17,24 @@
  * under the License.
  */
 
-package org.apache.cxf.ws.eventing.backend.notification.emitters;
+package org.apache.cxf.ws.eventing.backend.notification;
 
-import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
+import org.apache.cxf.ws.eventing.shared.EventingConstants;
 
-public class EmitterImpl implements Emitter {
+public enum SubscriptionEndStatus {
 
-    private final NotificatorService service;
+    DELIVERY_FAILURE(EventingConstants.SUBSCRIPTION_END_DELIVERY_FAILURE),
+    SOURCE_SHUTTING_DOWN(EventingConstants.SUBSCRIPTION_END_SHUTTING_DOWN),
+    SOURCE_CANCELLING(EventingConstants.SUBSCRIPTION_END_SOURCE_CANCELLING);
 
-    public EmitterImpl(NotificatorService service) {
-        this.service = service;
+    private String namespace;
+
+    private SubscriptionEndStatus(String namespace) {
+        this.namespace = namespace;
     }
 
     @Override
-    public void dispatch(Object event) {
-        service.dispatchEvent(event);
+    public String toString() {
+        return namespace;
     }
 }
