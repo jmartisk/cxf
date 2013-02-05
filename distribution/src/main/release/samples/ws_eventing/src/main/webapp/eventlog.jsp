@@ -31,6 +31,8 @@
     %>
 </table>
 
+<a href="index.jsp">Back to main page</a>
+
 
 
 </body>

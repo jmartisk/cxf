@@ -52,6 +52,13 @@
         Location: <input type="text" name="location" value="Russia"/><br/>
         Strength on Richter scale (a float number): <input type="text" name="strength" value="5.1"/><br/>
         <input type="submit" value="Let the ground shake!">
+    </form><br/>
+
+    <form action="FireEvent">
+        <h3>Fire event</h3>
+        Location: <input type="text" name="location" value="Norway"/><br/>
+        Severity (an int number): <input type="text" name="strength" value="8"/><br/>
+        <input type="submit" value="Burn it down!">
     </form>
 
 

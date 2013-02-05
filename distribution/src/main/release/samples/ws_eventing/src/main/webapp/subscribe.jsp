@@ -14,6 +14,7 @@
         <input type="submit" value="Submit"/>
     </form>
 
+    <a href="index.jsp">Back to main page</a>
 
 </body>
 </html>
