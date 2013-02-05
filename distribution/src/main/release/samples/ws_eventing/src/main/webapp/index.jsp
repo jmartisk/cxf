@@ -1,15 +1,19 @@
 <%@ page import="demo.wseventing.ApplicationSingleton" %>
 <%@ page import="demo.wseventing.eventapi.CatastrophicEventSinkImpl" %>
+<%@ page import="org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket" %>
+<%@ page import="demo.wseventing.SingletonSubscriptionManagerContainer" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title></title>
 </head>
 <body>
+
     <h2>Event sinks</h2>
     <h3>List of registered event sinks</h3>
     <table border="1">
-        <tr><td>URL</td><td>Is started?</td><td>Event log</td></tr>
+        <tr><td>URL</td><td>Is running?</td><td>Event log</td></tr>
         <%
             for (CatastrophicEventSinkImpl sink : ApplicationSingleton.getInstance().getEventSinks()) {
                 %>
@@ -22,5 +26,34 @@
             }
         %>
     </table>
+
+    <h2>Subscriptions</h2>
+    <a href="subscribe.jsp">Request a new subscription</a>
+    <h3>List of existing subscriptions</h3>
+    <table border="1">
+        <tr><td>UUID</td><td>Target URL</td><td>Filter</td><td>Expires</td></tr>
+        <%
+            for (SubscriptionTicket ticket : SingletonSubscriptionManagerContainer.getInstance().getTickets()) {
+        %>
+        <tr>
+            <td><%=ticket.getUuid()%></td>
+            <td><%=ticket.getTargetURL()%></td>
+            <td><%=StringEscapeUtils.escapeHtml(ticket.getFilterString())%></td>
+            <td><%=ticket.getExpires().toXMLFormat()%></td>
+        </tr>
+        <%
+            }
+        %>
+    </table>
+
+    <h2>Emit new events</h2>
+    <form action="EarthquakeEvent">
+        <h3>Earthquake event</h3>
+        Location: <input type="text" name="location" value="Russia"/><br/>
+        Strength on Richter scale (a float number): <input type="text" name="strength" value="5.1"/><br/>
+        <input type="submit" value="Let the ground shake!">
+    </form>
+
+
 </body>
 </html>

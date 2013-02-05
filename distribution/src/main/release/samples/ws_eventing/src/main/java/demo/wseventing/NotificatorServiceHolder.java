@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebListener;
 import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerInterfaceForNotificators;
 import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
 
+import demo.wseventing.eventapi.CatastrophicEventSink;
 import demo.wseventing.eventapi.CatastrophicEventSinkImpl;
 
 @WebListener
@@ -32,11 +33,11 @@ public class NotificatorServiceHolder implements ServletContextListener {
 
             @Override
             protected Class getEventSinkInterface() {
-                return null; // TODO
+                return CatastrophicEventSink.class;
             }
         };
         instance.start();
-        ApplicationSingleton.getInstance().createEventSink("hoho");
+        ApplicationSingleton.getInstance().createEventSink("/default");
     }
 
     @Override

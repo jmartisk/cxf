@@ -15,20 +15,20 @@ public class CatastrophicEventSinkImpl implements CatastrophicEventSink {
     public CatastrophicEventSinkImpl(String url) {
         JaxWsServerFactoryBean bean = new JaxWsServerFactoryBean();
         bean.setServiceBean(this);
-        bean.setAddress("/services/" + url);
+        bean.setAddress(url);
         this.url = url;
         server = bean.create();
     }
 
     @Override
     public void earthquake(EarthquakeEvent ev) {
-        System.out.println(ev.toString());
+        System.out.println("Event sink received an earthquake notification: " + ev.toString());
         receivedEvents.add(ev);
     }
 
     @Override
     public void fire(FireEvent ev) {
-        System.out.println(ev.toString());
+        System.out.println("Event sink received an fire notification: " + ev.toString());
         receivedEvents.add(ev);
     }
 

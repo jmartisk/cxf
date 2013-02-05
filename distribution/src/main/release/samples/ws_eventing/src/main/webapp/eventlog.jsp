@@ -23,8 +23,8 @@
         for (Object o : sink.getReceivedEvents()) {
     %>
     <tr>
-        <td><%=sink.getClass().getSimpleName()%></td>
-        <td><%=sink.toString()%></td>
+        <td><%=o.getClass().getSimpleName()%></td>
+        <td><%=o.toString()%></td>
     </tr>
     <%
         }

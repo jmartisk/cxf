@@ -128,6 +128,14 @@ public class SubscriptionTicket {
         }
     }
 
+    public String getFilterString() {
+        try {
+            return (String)this.getFilter().getContent().get(0);
+        } catch (NullPointerException ex) {
+            return null;
+        }
+    }
+
     public boolean isWrappedDelivery() {
         return wrappedDelivery;
     }

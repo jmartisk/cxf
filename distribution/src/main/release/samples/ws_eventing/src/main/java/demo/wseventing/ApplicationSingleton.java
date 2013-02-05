@@ -20,6 +20,9 @@ public class ApplicationSingleton {
     }
 
     public void createEventSink(String url) {
+        if (!url.startsWith("/")) {
+            url = "/" + url;
+        }
         eventSinks.add(new CatastrophicEventSinkImpl(url));
     }
 

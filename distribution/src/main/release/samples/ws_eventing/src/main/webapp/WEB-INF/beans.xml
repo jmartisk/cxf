@@ -13,6 +13,16 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
     <bean id="eventSourceBean" class="demo.wseventing.services.TestEventSource"/>
     <bean id="subscriptionManagerBean" class="demo.wseventing.services.TestSubscriptionManager"/>
 
-    <jaxws:endpoint implementor="#eventSourceBean" address="/services/EventSource"/>
-    <jaxws:endpoint implementor="#subscriptionManagerBean" address="/services/SubscriptionManager"/>
+    <jaxws:endpoint implementor="#eventSourceBean" address="/EventSource">
+        <jaxws:features>
+            <cxf:logging/>
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint implementor="#subscriptionManagerBean" address="/SubscriptionManager">
+        <jaxws:features>
+            <cxf:logging/>
+        </jaxws:features>
+    </jaxws:endpoint>
+
 </beans>
