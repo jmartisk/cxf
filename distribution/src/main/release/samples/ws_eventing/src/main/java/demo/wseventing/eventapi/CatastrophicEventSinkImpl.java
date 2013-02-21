@@ -62,7 +62,7 @@ public class CatastrophicEventSinkImpl implements CatastrophicEventSink {
     }
 
     public String getFullURL() {
-        return "/services/" + url;
+        return "services" + url;
     }
 
     public String getShortURL() {

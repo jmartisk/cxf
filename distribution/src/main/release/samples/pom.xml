@@ -96,7 +96,7 @@
         <module>oauth/server</module>
         <module>oauth/client</module>
 
-        <module>jax_rs/minimal_osgi</module>
+        <!-- <module>jax_rs/minimal_osgi</module>-->
         <module>ws_discovery</module>
 	<module>ws_eventing</module>
 

@@ -33,7 +33,7 @@ public final class SingletonSubscriptionManagerContainer {
     public static synchronized SubscriptionManager getInstance() {
         if (instance == null) {
             instance = new SubscriptionManagerImpl(
-                    "http://localhost:8080/ws-eventing-server/TestSubscriptionManager");
+                    "http://localhost:8080/ws_eventing/services/SubscriptionManager");
         }
         return instance;
     }

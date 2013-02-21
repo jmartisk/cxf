@@ -18,7 +18,7 @@
             for (CatastrophicEventSinkImpl sink : ApplicationSingleton.getInstance().getEventSinks()) {
                 %>
                     <tr>
-                        <td><%=sink.getFullURL()%></td>
+                        <td><a href="<%=sink.getFullURL()%>"><%=sink.getFullURL()%></a></td>
                         <td><%=sink.isRunning()%></td>
                         <td><a href="eventlog.jsp?sink=<%=sink.getShortURL()%>">List events</a></td>
                     </tr>
@@ -37,7 +37,7 @@
         %>
         <tr>
             <td><%=ticket.getUuid()%></td>
-            <td><%=ticket.getTargetURL()%></td>
+            <td><a href="<%=ticket.getTargetURL()%>"><%=ticket.getTargetURL()%></a></td>
             <td><%=StringEscapeUtils.escapeHtml(ticket.getFilterString())%></td>
             <td><%=ticket.getExpires().toXMLFormat()%></td>
         </tr>
@@ -60,6 +60,8 @@
         Severity (an int number): <input type="text" name="strength" value="8"/><br/>
         <input type="submit" value="Burn it down!">
     </form>
+
+    List <a href="services">registered SOAP endpoints</a> in this webapp.<br />
 
 
 </body>

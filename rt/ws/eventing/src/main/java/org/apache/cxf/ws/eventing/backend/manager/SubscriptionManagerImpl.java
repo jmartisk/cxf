@@ -116,10 +116,10 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
             return;
         }
         if (format.getName().equals(EventingConstants.DELIVERY_FORMAT_WRAPPED)) {
-//            throw new DeliveryFormatRequestedUnavailable();
+            throw new DeliveryFormatRequestedUnavailable();
 //            wrapped format not implemented yet
-            LOG.info("Wrapped delivery format was requested.");
-            ticket.setWrappedDelivery(true);
+//            LOG.info("Wrapped delivery format was requested.");
+//            ticket.setWrappedDelivery(true);
         } else if (format.getName().equals(EventingConstants.DELIVERY_FORMAT_UNWRAPPED)) {
             LOG.info("Wrapped delivery format was NOT requested.");
             ticket.setWrappedDelivery(false);
