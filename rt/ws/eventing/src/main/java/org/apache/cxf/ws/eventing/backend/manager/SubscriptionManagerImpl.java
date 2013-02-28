@@ -310,8 +310,10 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         synchronized (database) {
             SubscriptionTicket ticket = database.findById(subscriptionId);
             if (ticket != null) {
-                notificator.subscriptionEnd(ticket, reason, status);
                 database.removeTicketByUUID(subscriptionId);
+                if(ticket.getEndToURL() != null) {
+                    notificator.subscriptionEnd(ticket, reason, status);
+                }
             } else {
                 LOG.severe("No such subscription: " + subscriptionId);
             }
