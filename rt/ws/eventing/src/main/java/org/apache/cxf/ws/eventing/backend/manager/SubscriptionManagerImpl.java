@@ -311,7 +311,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
             SubscriptionTicket ticket = database.findById(subscriptionId);
             if (ticket != null) {
                 database.removeTicketByUUID(subscriptionId);
-                if(ticket.getEndToURL() != null) {
+                if (ticket.getEndToURL() != null) {
                     notificator.subscriptionEnd(ticket, reason, status);
                 }
             } else {
