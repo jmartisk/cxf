@@ -46,7 +46,7 @@ public class SubscriptionDatabaseImpl implements SubscriptionDatabase {
     @Override
     public void addTicket(SubscriptionTicket ticket) {
         ticketList.add(ticket);
-        LOG.info("SubscriptionDatabaseImpl accepted ticket: " + ticket.toString());
+        LOG.info("SubscriptionDatabaseImpl accepted ticket for subscription: " + ticket.getUuid());
     }
 
     @Override

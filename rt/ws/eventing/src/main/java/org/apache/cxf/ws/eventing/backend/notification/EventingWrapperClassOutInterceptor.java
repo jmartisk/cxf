@@ -44,6 +44,7 @@ import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.OperationInfo;
 import org.apache.cxf.service.model.ServiceModelUtil;
 
+@Deprecated // just experimental, doesn't work yet
 public class EventingWrapperClassOutInterceptor extends AbstractPhaseInterceptor<Message> {
     public EventingWrapperClassOutInterceptor() {
         super(Phase.PRE_LOGICAL);

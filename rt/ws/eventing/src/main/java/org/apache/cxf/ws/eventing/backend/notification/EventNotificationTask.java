@@ -62,8 +62,6 @@ class EventNotificationTask implements Runnable {
 
             if (target.isWrappedDelivery()) {
                 // TODO wrapped delivery
-                // service.getOutInterceptors().add(new EventingWrapperClassOutInterceptor());
-                System.out.println("WRAPPED :)");
             } else {
                 JaxWsProxyFactoryBean service = new JaxWsProxyFactoryBean();
                 service.getOutInterceptors().add(new LoggingOutInterceptor());

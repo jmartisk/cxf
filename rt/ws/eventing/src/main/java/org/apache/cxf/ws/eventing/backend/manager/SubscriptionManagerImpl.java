@@ -90,12 +90,12 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
                                                         FormatType format) {
         SubscriptionTicket ticket = new SubscriptionTicket();
         SubscriptionTicketGrantingResponse response = new SubscriptionTicketGrantingResponse();
+        grantSubscriptionManagerReference(ticket, response);
         processDelivery(delivery, ticket, response);
         processEndTo(endTo, ticket, response);
         processExpiration(expires, ticket, response);
         processFilters(filter, ticket, response);
         processFormat(format, ticket, response);
-        grantSubscriptionManagerReference(ticket, response);
         getDatabase().addTicket(ticket);
         return response;
     }
@@ -116,15 +116,14 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
             return;
         }
         if (format.getName().equals(EventingConstants.DELIVERY_FORMAT_WRAPPED)) {
-            throw new DeliveryFormatRequestedUnavailable();
-//            wrapped format not implemented yet
-//            LOG.info("Wrapped delivery format was requested.");
-//            ticket.setWrappedDelivery(true);
+//            wrapped format not implemented yet, ignore this
+            LOG.info("[subscription=" + ticket.getUuid() + "] Wrapped delivery format was requested.");
+            ticket.setWrappedDelivery(true);
         } else if (format.getName().equals(EventingConstants.DELIVERY_FORMAT_UNWRAPPED)) {
-            LOG.info("Wrapped delivery format was NOT requested.");
+            LOG.info("[subscription=" + ticket.getUuid() + "] Wrapped delivery format was NOT requested.");
             ticket.setWrappedDelivery(false);
         } else {
-            LOG.info("Unknown delivery format: " + format.getName());
+            LOG.info("[subscription=" + ticket.getUuid() + "] Unknown delivery format: " + format.getName());
             throw new DeliveryFormatRequestedUnavailable();
         }
     }
@@ -170,7 +169,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
             ticket.setExpires(grantExpiration());
             response.setExpires(granted);
         }
-        LOG.info("Granted Expiration date: " + granted.toString());
+        LOG.info("[subscription=" + ticket.getUuid() + "] Granted Expiration date: " + granted.toString());
     }
 
     protected void processEndTo(EndpointReferenceType request, SubscriptionTicket ticket,
@@ -277,12 +276,13 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
     @Override
     public ExpirationType renew(UUID uuid, ExpirationType requestedExpiration) {
-        LOG.info("Requested renew expiration: " + requestedExpiration.getValue());
         SubscriptionTicket ticket = getDatabase().findById(uuid);
         if (ticket == null) {
             throw new UnknownSubscription();
         }
-        LOG.info("Current expiration: " + ticket.getExpires().toXMLFormat());
+        LOG.info("[subscription=" + ticket.getUuid() + "] Requested renew expiration: "
+                + requestedExpiration.getValue());
+        LOG.fine("[subscription=" + ticket.getUuid() + "] Current expiration: " + ticket.getExpires().toXMLFormat());
         ExpirationType response = new ExpirationType();
         XMLGregorianCalendar grantedExpires;
         if (DurationAndDateUtil.isDuration(requestedExpiration.getValue())) {
@@ -290,7 +290,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
             javax.xml.datatype.Duration requestedDuration = DurationAndDateUtil
                     .parseDuration(requestedExpiration.getValue());
             javax.xml.datatype.Duration grantedDuration = requestedDuration;
-            LOG.info("Granted renewal duration: " + grantedDuration.toString());
+            LOG.info("[subscription=" + ticket.getUuid() + "] Granted renewal duration: " + grantedDuration.toString());
             grantedExpires = getDatabase().findById(uuid)
                     .getExpires();       // NOW() or current Expires() ????
             grantedExpires.add(grantedDuration);
@@ -298,7 +298,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
         } else {
             // end-date was requested
             grantedExpires = DurationAndDateUtil.parseXMLGregorianCalendar(requestedExpiration.getValue());
-            LOG.info("Granted expiration: " + grantedExpires.toXMLFormat());
+            LOG.info("[subscription=" + ticket.getUuid() + "] Granted expiration: " + grantedExpires.toXMLFormat());
             response.setValue(grantedExpires.toXMLFormat());
         }
         getDatabase().findById(uuid).setExpires(grantedExpires);
