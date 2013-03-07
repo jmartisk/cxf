@@ -206,7 +206,6 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
                 uuid.toString());
         subscriptionManagerReference.setReferenceParameters(new ReferenceParametersType());
         subscriptionManagerReference.getReferenceParameters().getAny().add(idqn);
-        ticket.setSubscriptionManagerReference(subscriptionManagerReference);
         ticket.setUuid(uuid);
         response.setSubscriptionManagerReference(subscriptionManagerReference);
         response.setUUID(uuid);

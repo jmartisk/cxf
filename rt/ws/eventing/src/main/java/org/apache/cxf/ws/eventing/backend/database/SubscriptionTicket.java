@@ -42,7 +42,6 @@ public class SubscriptionTicket {
     private DeliveryType delivery;
     private XMLGregorianCalendar expires;
     private FilterType filter;
-    private EndpointReferenceType subscriptionManagerReference;
     private UUID uuid;
     private boolean wrappedDelivery;
 
@@ -83,14 +82,6 @@ public class SubscriptionTicket {
 
     public boolean isExpired() {
         return expires.toGregorianCalendar().before(new GregorianCalendar());
-    }
-
-    public EndpointReferenceType getSubscriptionManagerReference() {
-        return subscriptionManagerReference;
-    }
-
-    public void setSubscriptionManagerReference(EndpointReferenceType subscriptionManagerReference) {
-        this.subscriptionManagerReference = subscriptionManagerReference;
     }
 
     public void setExpires(XMLGregorianCalendar expires) {
