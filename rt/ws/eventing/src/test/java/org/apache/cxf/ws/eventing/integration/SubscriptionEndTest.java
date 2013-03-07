@@ -28,8 +28,6 @@ import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
-import junit.framework.Assert;
-
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.ws.eventing.AttributedURIType;
 import org.apache.cxf.ws.eventing.DeliveryType;
@@ -44,6 +42,7 @@ import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
 import org.apache.cxf.ws.eventing.base.TestUtil;
 import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
 import org.apache.cxf.ws.eventing.integration.eventsink.TestingEndToEndpointImpl;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class SubscriptionEndTest extends SimpleEventingIntegrationTest {

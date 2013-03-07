@@ -22,8 +22,6 @@ package org.apache.cxf.ws.eventing.integration;
 import java.io.IOException;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import junit.framework.Assert;
-
 import org.apache.cxf.ws.eventing.DeliveryType;
 import org.apache.cxf.ws.eventing.ExpirationType;
 import org.apache.cxf.ws.eventing.Subscribe;
@@ -31,6 +29,7 @@ import org.apache.cxf.ws.eventing.SubscribeResponse;
 import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
 import org.apache.cxf.ws.eventing.shared.faults.NoDeliveryMechanismEstablished;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {

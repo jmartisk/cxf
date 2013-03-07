@@ -29,6 +29,7 @@ import org.apache.cxf.ws.eventing.AttributedURIType;
 import org.apache.cxf.ws.eventing.EndpointReferenceType;
 import org.apache.cxf.ws.eventing.NotifyTo;
 import org.apache.cxf.ws.eventing.ReferenceParametersType;
+import org.apache.cxf.ws.eventing.backend.database.SubscriptionTicket;
 import org.apache.cxf.ws.eventing.backend.manager.SubscriptionManagerInterfaceForNotificators;
 import org.apache.cxf.ws.eventing.backend.notification.NotificatorService;
 import org.apache.cxf.ws.eventing.base.aux.SingletonSubscriptionManagerContainer;
@@ -43,6 +44,7 @@ import org.apache.cxf.ws.eventing.integration.notificationapi.assertions.WSAActi
 import org.apache.cxf.ws.eventing.manager.SubscriptionManagerEndpoint;
 import org.apache.cxf.ws.eventing.shared.EventingConstants;
 import org.apache.cxf.ws.eventing.shared.handlers.ReferenceParametersAddingHandler;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -155,6 +157,14 @@ public abstract class SimpleEventingIntegrationTest {
         factory.setServiceClass(EventSourceEndpoint.class);
         factory.setAddress(URL_EVENT_SOURCE);
         eventSourceClient = (EventSourceEndpoint)factory.create();
+    }
+
+    @After
+    public void after() {
+        // remove all subscriptions from the database
+        for (SubscriptionTicket ticket : SingletonSubscriptionManagerContainer.getInstance().getTickets()) {
+            SingletonSubscriptionManagerContainer.getInstance().unsubscribeTicket(ticket.getUuid());
+        }
     }
 
     /**
