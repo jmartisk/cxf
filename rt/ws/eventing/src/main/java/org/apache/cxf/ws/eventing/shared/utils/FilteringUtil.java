@@ -54,7 +54,6 @@ public final class FilteringUtil {
         }
         String xPathString = (String)filter.getContent().get(0);
         try {
-//            XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
             XPathExpression xPathExpression = xPath.compile(xPathString);
             return (Boolean)xPathExpression.evaluate(elm, XPathConstants.BOOLEAN);

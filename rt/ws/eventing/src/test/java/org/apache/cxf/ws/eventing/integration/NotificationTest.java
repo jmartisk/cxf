@@ -218,7 +218,8 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
 
         subscribe.setFilter(new FilterType());
-        subscribe.getFilter().getContent().add("//location[text()='Canada']");
+        subscribe.getFilter().getContent().add("//*[local-name()='fire' and "
+                + "namespace-uri()='http://www.events.com']/location[text()='Canada']");
 
 
         eventSourceClient.subscribeOp(subscribe);
@@ -271,7 +272,7 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
 
         subscribe.setFilter(new FilterType());
-        subscribe.getFilter().getContent().add("//location[text()='Russia']");
+        subscribe.getFilter().getContent().add("/*[local-name()='fire']/location[text()='Russia']");
 
 
         eventSourceClient.subscribeOp(subscribe);
@@ -322,7 +323,9 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
 
         subscribe.setFilter(new FilterType());
-        subscribe.getFilter().getContent().add("//location[text()='Russia']/../richterScale[contains(text(),'3.5')]");
+        subscribe.getFilter().getContent()
+                .add("//*[local-name()='earthquake']/location[text()='Russia']/"
+                        + "../richterScale[contains(text(),'3.5')]");
 
         eventSourceClient.subscribeOp(subscribe);
 
