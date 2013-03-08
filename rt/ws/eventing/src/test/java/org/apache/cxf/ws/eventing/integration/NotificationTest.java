@@ -358,4 +358,55 @@ public class NotificationTest extends SimpleEventingIntegrationTest {
         }
     }
 
+    /**
+     * request a subscription that expires soon
+     * an event will be emitted after the expiration
+     * we should not receive notification about the event
+     * @throws IOException
+     */
+    @Test
+    public void expiration() throws IOException {
+        NotificatorService service = createNotificatorService();
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        exp.setValue(
+                DurationAndDateUtil.convertToXMLString(DurationAndDateUtil.parseDurationOrTimestamp("PT1S")));
+        subscribe.setExpires(exp);
+
+        EndpointReferenceType eventSinkERT = new EndpointReferenceType();
+
+        AttributedURIType eventSinkAddr = new AttributedURIType();
+        String url = TestUtil.generateRandomURLWithLocalTransport();
+        eventSinkAddr.setValue(url);
+        eventSinkERT.setAddress(eventSinkAddr);
+        subscribe.setDelivery(new DeliveryType());
+        subscribe.getDelivery().getContent().add(new NotifyTo());
+        ((NotifyTo)subscribe.getDelivery().getContent().get(0)).setValue(eventSinkERT);
+
+
+        eventSourceClient.subscribeOp(subscribe);
+
+        Server eventSinkServer = createEventSink(url);
+        TestingEventSinkImpl.RECEIVED_FIRES.set(0);
+
+        service.start();
+        Emitter emitter = new EmitterImpl(service);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        emitter.dispatch(new FireEvent("Canada", 8));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        eventSinkServer.stop();
+        if (TestingEventSinkImpl.RECEIVED_FIRES.get() != 0) {
+            Assert.fail("TestingEventSinkImpl should not have received any events but received "
+                    + TestingEventSinkImpl.RECEIVED_FIRES.get());
+        }
+    }
+
 }
