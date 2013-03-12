@@ -98,7 +98,7 @@ public abstract class AbstractSubscriptionManager implements SubscriptionManager
             throw new UnknownSubscription();
         }
         if (uuid.getClass() != String.class) {
-            throw new Error("Susbcription ID should be a String but is " + uuid.getClass().getName());
+            throw new Error("Subscription ID should be a String but is " + uuid.getClass().getName());
         }
         return (String)uuid;
     }
