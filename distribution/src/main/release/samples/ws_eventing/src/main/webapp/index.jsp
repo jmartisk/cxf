@@ -39,7 +39,7 @@
             <td><%=ticket.getUuid()%></td>
             <td><a href="<%=ticket.getTargetURL()%>"><%=ticket.getTargetURL()%></a></td>
             <td><%=StringEscapeUtils.escapeHtml(ticket.getFilterString())%></td>
-            <td><%=ticket.getExpires().toXMLFormat()%></td>
+            <td><%=ticket.isNonExpiring() ? "never" : ticket.getExpires().toXMLFormat()%></td>
         </tr>
         <%
             }

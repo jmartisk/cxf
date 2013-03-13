@@ -50,7 +50,7 @@ public class CreateSubscriptionServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         try {
             resp.getWriter().append("<html><body>");
 
@@ -60,7 +60,18 @@ public class CreateSubscriptionServlet extends HttpServlet {
             factory.setAddress("http://localhost:8080/ws_eventing/services/EventSource");
             EventSourceEndpoint requestorClient = (EventSourceEndpoint)factory.create();
 
-            Subscribe sub = createSubscribeMessage(req.getParameter("targeturl"), req.getParameter("filter"));
+            String expires = null;
+            if (req.getParameter("expires-set") == null) {
+                expires = req.getParameter("expires");
+            } else {
+                if (!req.getParameter("expires-set").equals("false")) {
+                    expires = req.getParameter("expires");
+                }
+            }
+
+            Subscribe sub = createSubscribeMessage(req.getParameter("targeturl"),
+                    req.getParameter("filter"),
+                    expires);
 
             resp.getWriter().append("<h3>Subscription request</h3>");
             resp.getWriter().append(convertJAXBElementToStringAndEscapeHTML(sub));
@@ -78,15 +89,18 @@ public class CreateSubscriptionServlet extends HttpServlet {
 
     }
 
-    public Subscribe createSubscribeMessage(String targetURL, String filter)
-        throws DatatypeConfigurationException {
+    public Subscribe createSubscribeMessage(String targetURL, String filter, String expires)
+            throws DatatypeConfigurationException {
         Subscribe sub = new Subscribe();
 
-        // expires
-        XMLGregorianCalendar calendar;
-        calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar("2014-06-26T12:00:00.000-01:00");
-        sub.setExpires(new ExpirationType());
-        sub.getExpires().setValue(calendar.toXMLFormat());
+
+        if (expires != null) {
+            // expires
+            XMLGregorianCalendar calendar;
+            calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(expires);
+            sub.setExpires(new ExpirationType());
+            sub.getExpires().setValue(calendar.toXMLFormat());
+        }
 
         // delivery
         EndpointReferenceType eventSink = new EndpointReferenceType();
