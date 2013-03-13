@@ -45,7 +45,7 @@ public final class FilteringUtil {
     }
 
     public static boolean isFilteringDialectSupported(String namespace) {
-        return namespace.equals(NAMESPACE_XPATH10) || namespace.equals(NAMESPACE_XPATH20);
+        return namespace.equals(NAMESPACE_XPATH10);
     }
 
     public static boolean doesConformToFilter(Element elm, FilterType filter) {
