@@ -20,6 +20,7 @@
 package org.apache.cxf.ws.eventing.integration;
 
 import java.io.IOException;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.cxf.ws.eventing.DeliveryType;
@@ -44,7 +45,7 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
      * @throws IOException
      */
     @Test
-    public void testExpirationGranting() throws IOException {
+    public void testExpirationGrantingWithoutBestEffort() throws IOException {
         // we specify a xs:duration
         Subscribe subscribe = new Subscribe();
         ExpirationType exp = new ExpirationType();
@@ -65,8 +66,9 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
         // we specify a xs:dateTime
         subscribe = new Subscribe();
         exp = new ExpirationType();
-        exp.setValue(DurationAndDateUtil.convertToXMLString(
-                DurationAndDateUtil.parseDurationOrTimestamp("2138-06-26T12:23:12.000-01:00")));
+        XMLGregorianCalendar dateRequest =
+                (XMLGregorianCalendar)DurationAndDateUtil.parseDurationOrTimestamp("2138-06-26T12:23:12.000-01:00");
+        exp.setValue(DurationAndDateUtil.convertToXMLString(dateRequest));
         subscribe.setExpires(exp);
         delivery = new DeliveryType();
         subscribe.setDelivery(delivery);
@@ -76,6 +78,12 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
                 "Specification requires that EventSource return a "
                         + "xs:dateTime expirationType if a xs:dateTime was requested by client",
                 DurationAndDateUtil.isXMLGregorianCalendar(resp.getGrantedExpires().getValue()));
+        XMLGregorianCalendar returned = DurationAndDateUtil.parseXMLGregorianCalendar(
+                resp.getGrantedExpires().getValue());
+        System.out.println("granted expiration: " + returned.normalize().toXMLFormat());
+        System.out.println("requested expiration: " + dateRequest.normalize().toXMLFormat());
+        Assert.assertTrue("Server should have returned exactly the same date as we requested",
+                returned.equals(dateRequest));
 
         // we don't specify anything
         subscribe = new Subscribe();
@@ -87,6 +95,29 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
                 "Specification requires that EventSource return a xs:duration "
                         + "expirationType if no specific expirationType was requested by client",
                 DurationAndDateUtil.isDuration(resp.getGrantedExpires().getValue()));
+    }
+
+    /**
+     * When BestEffort=true, the server doesn't have to grant exactly the date as we requested
+     * @throws IOException
+     */
+    @Test
+    public void testExpirationGrantingWithBestEffort() throws IOException {
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        DeliveryType delivery = new DeliveryType();
+        XMLGregorianCalendar dateRequest =
+                (XMLGregorianCalendar)DurationAndDateUtil.parseDurationOrTimestamp("2138-06-26T12:23:12.000-01:00");
+        exp.setValue(DurationAndDateUtil.convertToXMLString(dateRequest));
+        exp.setBestEffort(true);
+        subscribe.setExpires(exp);
+        subscribe.setDelivery(delivery);
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
+        SubscribeResponse resp = eventSourceClient.subscribeOp(subscribe);
+        Assert.assertTrue(
+                "Specification requires that EventSource return a "
+                        + "xs:dateTime expirationType if a xs:dateTime was requested by client",
+                DurationAndDateUtil.isXMLGregorianCalendar(resp.getGrantedExpires().getValue()));
     }
 
     @Test
@@ -108,3 +139,4 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
     }
 
 }
+

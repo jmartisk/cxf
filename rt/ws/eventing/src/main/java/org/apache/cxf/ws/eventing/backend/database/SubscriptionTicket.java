@@ -45,6 +45,11 @@ public class SubscriptionTicket {
     private UUID uuid;
     private boolean wrappedDelivery;
 
+    /**
+     * If set to true, this ticket does not expire and the 'expires' field is ignored.
+     */
+    private boolean nonExpiring;
+
     public SubscriptionTicket() {
     }
 
@@ -81,7 +86,10 @@ public class SubscriptionTicket {
     }
 
     public boolean isExpired() {
-        return expires.toGregorianCalendar().before(new GregorianCalendar());
+        if (nonExpiring) {
+            return false;
+        }
+        return  expires.toGregorianCalendar().before(new GregorianCalendar());
     }
 
     public void setExpires(XMLGregorianCalendar expires) {
@@ -140,4 +148,11 @@ public class SubscriptionTicket {
                 .getDelivery().getContent().get(0)).getValue().getReferenceParameters();
     }
 
+    public boolean isNonExpiring() {
+        return nonExpiring;
+    }
+
+    public void setNonExpiring(boolean nonExpiring) {
+        this.nonExpiring = nonExpiring;
+    }
 }

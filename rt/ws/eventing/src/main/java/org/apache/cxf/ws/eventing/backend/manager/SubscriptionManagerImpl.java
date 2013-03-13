@@ -51,6 +51,7 @@ import org.apache.cxf.ws.eventing.shared.faults.DeliveryFormatRequestedUnavailab
 import org.apache.cxf.ws.eventing.shared.faults.FilteringRequestedUnavailable;
 import org.apache.cxf.ws.eventing.shared.faults.NoDeliveryMechanismEstablished;
 import org.apache.cxf.ws.eventing.shared.faults.UnknownSubscription;
+import org.apache.cxf.ws.eventing.shared.faults.UnsupportedExpirationType;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.apache.cxf.ws.eventing.shared.utils.EPRInspectionTool;
 import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
@@ -152,23 +153,46 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
                                      SubscriptionTicketGrantingResponse response) {
         XMLGregorianCalendar granted;
         if (request != null) {
-            Object expirationTypeValue = DurationAndDateUtil.parseDurationOrTimestamp(request.getValue());
-            if (expirationTypeValue instanceof javax.xml.datatype.Duration) {
-                granted = grantExpirationFor((javax.xml.datatype.Duration)expirationTypeValue);
-                ticket.setExpires(granted);
-                response.setExpires(granted);
-            } else if (expirationTypeValue instanceof XMLGregorianCalendar) {
-                granted = grantExpirationFor((XMLGregorianCalendar)expirationTypeValue);
-                ticket.setExpires(granted);
-                response.setExpires(granted);
+            Object expirationTypeValue;
+            try {
+                expirationTypeValue = DurationAndDateUtil.parseDurationOrTimestamp(request.getValue());
+            } catch (IllegalArgumentException ex) {
+                throw new UnsupportedExpirationType();
+            }
+            Boolean bestEffort = request.isBestEffort();
+            if (bestEffort != null && bestEffort) {
+                if (expirationTypeValue instanceof javax.xml.datatype.Duration) {
+                    granted = grantExpirationFor((javax.xml.datatype.Duration)expirationTypeValue);
+                } else if (expirationTypeValue instanceof XMLGregorianCalendar) {
+                    granted = grantExpirationFor((XMLGregorianCalendar)expirationTypeValue);
+                } else {
+                    throw new Error("expirationTypeValue of unexpected type: " + expirationTypeValue.getClass());
+                }
             } else {
-                throw new Error("expirationTypeValue of unexpected type: " + expirationTypeValue.getClass());
+                // client did not specify BestEffort granting, so we must either follow their wish
+                // or throw a UnsupportedExpirationValue fault
+                if (expirationTypeValue instanceof javax.xml.datatype.Duration) {
+                    try {
+                        if (DurationAndDateUtil.isPT0S((javax.xml.datatype.Duration)expirationTypeValue)) {
+                            ticket.setNonExpiring(true);
+                        }
+                        granted = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
+                        granted.add((javax.xml.datatype.Duration)expirationTypeValue);
+                    } catch (DatatypeConfigurationException e) {
+                        throw new Error(e);
+                    }
+                } else if (expirationTypeValue instanceof XMLGregorianCalendar) {
+                    granted = (XMLGregorianCalendar)expirationTypeValue;
+
+                } else {
+                    throw new Error("expirationTypeValue of unexpected type: " + expirationTypeValue.getClass());
+                }
             }
         } else {
             granted = grantExpiration();
-            ticket.setExpires(grantExpiration());
-            response.setExpires(granted);
         }
+        ticket.setExpires(granted);
+        response.setExpires(granted);
         LOG.info("[subscription=" + ticket.getUuid() + "] Granted Expiration date: " + granted.toString());
     }
 
@@ -214,7 +238,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
     /**
      * Decide what expiration time to grant to the subscription, if
-     * the client specified a calendar time in the request.
+     * the client specified a calendar time in the request and did specify BestEffort=true.
      */
     public XMLGregorianCalendar grantExpirationFor(XMLGregorianCalendar requested) {
         return requested;   // default
@@ -222,7 +246,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
 
     /**
      * Decide what expiration time to grant to the subscription, if
-     * the client specified a duration in the request.
+     * the client specified a duration in the request and did specify BestEffort=true.
      */
     public XMLGregorianCalendar grantExpirationFor(javax.xml.datatype.Duration requested) {
         XMLGregorianCalendar granted;
