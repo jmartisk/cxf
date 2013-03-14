@@ -31,6 +31,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.ws.eventing.AttributedURIType;
 import org.apache.cxf.ws.eventing.DeliveryType;
@@ -51,7 +52,6 @@ import org.apache.cxf.ws.eventing.shared.faults.DeliveryFormatRequestedUnavailab
 import org.apache.cxf.ws.eventing.shared.faults.FilteringRequestedUnavailable;
 import org.apache.cxf.ws.eventing.shared.faults.NoDeliveryMechanismEstablished;
 import org.apache.cxf.ws.eventing.shared.faults.UnknownSubscription;
-import org.apache.cxf.ws.eventing.shared.faults.UnsupportedExpirationType;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.apache.cxf.ws.eventing.shared.utils.EPRInspectionTool;
 import org.apache.cxf.ws.eventing.shared.utils.FilteringUtil;
@@ -157,7 +157,7 @@ public class SubscriptionManagerImpl implements SubscriptionManager {
             try {
                 expirationTypeValue = DurationAndDateUtil.parseDurationOrTimestamp(request.getValue());
             } catch (IllegalArgumentException ex) {
-                throw new UnsupportedExpirationType();
+                throw new SoapFault("Cannot parse expiration", new QName("http://cxf.apache.org/eventing", "Error"));
             }
             Boolean bestEffort = request.isBestEffort();
             if (bestEffort != null && bestEffort) {

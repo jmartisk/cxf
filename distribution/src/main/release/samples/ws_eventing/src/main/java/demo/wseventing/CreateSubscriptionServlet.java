@@ -70,7 +70,7 @@ public class CreateSubscriptionServlet extends HttpServlet {
             }
 
             Subscribe sub = createSubscribeMessage(req.getParameter("targeturl"),
-                    req.getParameter("filter"),
+                    req.getParameter("filter-set") == null ? req.getParameter("filter") : null,
                     expires);
 
             resp.getWriter().append("<h3>Subscription request</h3>");
@@ -94,12 +94,10 @@ public class CreateSubscriptionServlet extends HttpServlet {
         Subscribe sub = new Subscribe();
 
 
+        // expires
         if (expires != null) {
-            // expires
-            XMLGregorianCalendar calendar;
-            calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(expires);
             sub.setExpires(new ExpirationType());
-            sub.getExpires().setValue(calendar.toXMLFormat());
+            sub.getExpires().setValue(expires);
         }
 
         // delivery
@@ -116,7 +114,6 @@ public class CreateSubscriptionServlet extends HttpServlet {
             sub.setFilter(new FilterType());
             sub.getFilter().getContent().add(filter);
         }
-
 
         return sub;
     }
