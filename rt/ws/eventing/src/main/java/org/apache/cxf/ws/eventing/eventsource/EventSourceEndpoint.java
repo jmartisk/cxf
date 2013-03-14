@@ -42,11 +42,6 @@ import org.apache.cxf.ws.eventing.shared.EventingConstants;
 @WebService(targetNamespace = EventingConstants.EVENTING_2011_03_NAMESPACE)
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @Addressing(enabled = true, required = true)
-//@Features(features = {"org.apache.cxf.ws.eventing.shared.faulthandling.EventingFaultHandlingFeature"})
-@InInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingInInterceptor")
-// TODO for debugging purposes. To be removed later
-@OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor")
-// TODO for debugging purposes. To be removed later
 public interface EventSourceEndpoint {
 
 
