@@ -28,8 +28,6 @@ import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.Action;
 import javax.xml.ws.soap.Addressing;
 
-import org.apache.cxf.interceptor.InInterceptors;
-import org.apache.cxf.interceptor.OutInterceptors;
 import org.apache.cxf.ws.eventing.Subscribe;
 import org.apache.cxf.ws.eventing.SubscribeResponse;
 import org.apache.cxf.ws.eventing.shared.EventingConstants;
