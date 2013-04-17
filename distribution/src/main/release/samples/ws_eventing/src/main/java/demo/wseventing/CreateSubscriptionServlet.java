@@ -30,8 +30,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
@@ -50,7 +48,7 @@ public class CreateSubscriptionServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         try {
             resp.getWriter().append("<html><body>");
 
@@ -90,7 +88,7 @@ public class CreateSubscriptionServlet extends HttpServlet {
     }
 
     public Subscribe createSubscribeMessage(String targetURL, String filter, String expires)
-            throws DatatypeConfigurationException {
+        throws DatatypeConfigurationException {
         Subscribe sub = new Subscribe();
 
 
