@@ -71,18 +71,6 @@
 
     <build>
         <finalName>ws_eventing</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.0-beta-1</version>
-                <configuration>
-                    <username>both</username>
-                    <password>tomcat</password>
-                    <update>true</update>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
 
