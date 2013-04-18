@@ -49,4 +49,14 @@ public class FilterEvaluationTest {
         Assert.assertFalse(FilteringUtil.doesConformToFilter(doc.getDocumentElement(), filter));
     }
 
+    @Test
+    public void validFilter() throws Exception {
+        Assert.assertTrue(FilteringUtil.isValidFilter("//filter"));
+    }
+
+    @Test
+    public void invalidFilter() throws Exception {
+        Assert.assertFalse(FilteringUtil.isValidFilter("@/$"));
+    }
+
 }

@@ -25,9 +25,11 @@ import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.cxf.ws.eventing.DeliveryType;
 import org.apache.cxf.ws.eventing.ExpirationType;
+import org.apache.cxf.ws.eventing.FilterType;
 import org.apache.cxf.ws.eventing.Subscribe;
 import org.apache.cxf.ws.eventing.SubscribeResponse;
 import org.apache.cxf.ws.eventing.base.SimpleEventingIntegrationTest;
+import org.apache.cxf.ws.eventing.shared.faults.CannotProcessFilter;
 import org.apache.cxf.ws.eventing.shared.faults.NoDeliveryMechanismEstablished;
 import org.apache.cxf.ws.eventing.shared.utils.DurationAndDateUtil;
 import org.junit.Assert;
@@ -35,7 +37,7 @@ import org.junit.Test;
 
 public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
 
-    /**
+/*    *//**
      * specification:
      * The expiration time MAY be either a specific time or a duration but MUST
      * be of the same type as the wse:Expires element of the corresponding request.
@@ -136,6 +138,34 @@ public class SubscriptionGrantingTest extends SimpleEventingIntegrationTest {
             return;
         }
         Assert.fail("Event source should have sent a NoDeliveryMechanismEstablished fault");
+    }
+
+    @Test
+    public void cannotProcessFilter() throws IOException {
+        Subscribe subscribe = new Subscribe();
+        ExpirationType exp = new ExpirationType();
+        DeliveryType delivery = new DeliveryType();
+        XMLGregorianCalendar dateRequest =
+                (XMLGregorianCalendar)DurationAndDateUtil.parseDurationOrTimestamp("2138-06-26T12:23:12.000-01:00");
+        exp.setValue(DurationAndDateUtil.convertToXMLString(dateRequest));
+        exp.setBestEffort(true);
+        subscribe.setExpires(exp);
+        subscribe.setDelivery(delivery);
+        subscribe.getDelivery().getContent().add(createDummyNotifyTo());
+
+
+        subscribe.setFilter(new FilterType());
+        subscribe.getFilter().getContent()
+                .add("@^5this-is-not-a-valid-xpath-expression!!!*-/");
+
+        try {
+            eventSourceClient.subscribeOp(subscribe);
+        } catch (SOAPFaultException ex) {
+            Assert.assertTrue(ex.getFault().getFaultCode().contains(CannotProcessFilter.LOCAL_PART));
+            Assert.assertTrue(ex.getFault().getTextContent().contains(CannotProcessFilter.REASON));
+            return;
+        }
+        Assert.fail("Event source should have sent a CannotProcessFilter fault");
     }
 
 }
